@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>지각 평형 실험실</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 교과서 단면도 실험실 — 왼쪽은 단면 무대(SVG), 오른쪽은 조작·계산 패널. 상단 탭 = 단원 흐름, 탭 1은 '공식 사다리'가 단계마다 채워짐 */
+:root{
+  --bg:#EBEFED; --surface:#F7F9F8; --surface-2:#DDE3E0; --ink:#17201C; --muted:#53605A; --line:#C3CCC8;
+  --accent:#2445B8; --accent-ink:#FFFFFF; --accent-soft:#DDE4FA;
+  --good:#17704A; --good-soft:#D5ECDF; --warn:#A8441A; --warn-soft:#F5DFD3;
+  --shade-hi:rgba(255,255,255,.32); --shade-lo:rgba(0,0,0,.20); --edge:rgba(23,32,28,.55);
+  --m-water:#5D9BD0; --m-water-ink:#0A2338;
+  --m-sed:#DDBA62; --m-sed-ink:#382A06;
+  --m-granite:#E2A893; --m-granite-ink:#45190C;
+  --m-basalt:#525E68; --m-basalt-ink:#F2F5F7;
+  --m-mantle:#C7603A; --m-mantle-ink:#FFF3EB;
+  --m-ice:#D2EDF6; --m-ice-ink:#17343F;
+  --m-wood:#BC8956; --m-wood-ink:#2C1906;
+  --m-brick:#B0503A; --m-sponge:#EAD267; --m-sponge-dk:#C2A63A;
+  --tank:rgba(93,155,208,.30); --sky:#DCE8F1;
+  --f-display:"Hahmlet","Nanum Myeongjo","AppleMyungjo",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --f-var:"Times New Roman",Times,"Noto Serif",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --surface:#161D1A; --surface-2:#222B27; --ink:#E2E9E5; --muted:#97A49E; --line:#303B36;
+    --accent:#93A9FF; --accent-ink:#0B1433; --accent-soft:#222D52;
+    --good:#5FCB92; --good-soft:#163024; --warn:#F09666; --warn-soft:#3A2116;
+    --shade-hi:rgba(255,255,255,.14); --shade-lo:rgba(0,0,0,.32); --edge:rgba(226,233,229,.45);
+    --m-water:#3E77A8; --m-water-ink:#EAF4FC;
+    --m-sed:#B49345; --m-sed-ink:#1B1403;
+    --m-granite:#B98070; --m-granite-ink:#1E0B05;
+    --m-basalt:#6E7A85; --m-basalt-ink:#F2F5F7;
+    --m-mantle:#A9502E; --m-mantle-ink:#FFF0E6;
+    --m-ice:#9BC7D5; --m-ice-ink:#0C2229;
+    --m-wood:#9C7044; --m-wood-ink:#1C0F03;
+    --m-brick:#9B4632; --m-sponge:#BFA64A; --m-sponge-dk:#8F7A2C;
+    --tank:rgba(62,119,168,.38); --sky:#18242C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#161D1A; --surface-2:#222B27; --ink:#E2E9E5; --muted:#97A49E; --line:#303B36;
+  --accent:#93A9FF; --accent-ink:#0B1433; --accent-soft:#222D52;
+  --good:#5FCB92; --good-soft:#163024; --warn:#F09666; --warn-soft:#3A2116;
+  --shade-hi:rgba(255,255,255,.14); --shade-lo:rgba(0,0,0,.32); --edge:rgba(226,233,229,.45);
+  --m-water:#3E77A8; --m-water-ink:#EAF4FC;
+  --m-sed:#B49345; --m-sed-ink:#1B1403;
+  --m-granite:#B98070; --m-granite-ink:#1E0B05;
+  --m-basalt:#6E7A85; --m-basalt-ink:#F2F5F7;
+  --m-mantle:#A9502E; --m-mantle-ink:#FFF0E6;
+  --m-ice:#9BC7D5; --m-ice-ink:#0C2229;
+  --m-wood:#9C7044; --m-wood-ink:#1C0F03;
+  --m-brick:#9B4632; --m-sponge:#BFA64A; --m-sponge-dk:#8F7A2C;
+  --tank:rgba(62,119,168,.38); --sky:#18242C;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 56px}
+.wrap{max-width:1200px;margin:0 auto}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.05em;color:var(--muted);font-weight:500}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4vw,38px);line-height:1.15;margin:4px 0 0;text-wrap:balance;letter-spacing:-.01em}
+nav.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{appearance:none;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;padding:8px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.tab .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected="true"] .n{color:inherit;opacity:.7}
+
+.intro{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin:22px 0 14px}
+h2{font-family:var(--f-display);font-weight:700;font-size:25px;margin:0;line-height:1.2}
+.lead{color:var(--muted);margin:0;max-width:68ch}
+
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;margin-bottom:14px}
+.rung{appearance:none;border:0;border-left:1px solid var(--line);background:transparent;text-align:left;padding:10px 12px;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.rung:first-child{border-left:0}
+.rung .k{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
+.rung .eq{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rung .q{font-family:var(--f-mono);font-size:16px;color:var(--muted);display:none}
+.rung.locked .eq{display:none}
+.rung.locked .q{display:block}
+.rung.current{background:var(--accent-soft)}
+.rung.current .k{color:var(--accent)}
+@media (max-width:820px){.ladder{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}}
+
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.step{appearance:none;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;padding:7px 12px;border-radius:8px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.step .k{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.step[aria-current="step"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.step[aria-current="step"] .k{color:inherit;opacity:.75}
+
+.lab{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.lab{grid-template-columns:minmax(0,1fr)}}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;min-width:0;overflow-x:auto}
+.stage svg{display:block;width:100%;min-width:480px;height:auto;user-select:none;-webkit-user-select:none}
+.cap{font-size:13px;color:var(--muted);margin:6px 4px 2px}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.card h3{font-size:12.5px;letter-spacing:.04em;color:var(--muted);margin:0 0 8px;font-weight:600}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{appearance:none;border:1px solid var(--line);background:var(--bg);padding:6px 11px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--edge);flex:none}
+.field{display:grid;grid-template-columns:5.5em minmax(0,1fr) auto;gap:10px;align-items:center;padding:4px 0}
+.field>span:first-child{font-size:14px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;text-align:right;min-width:6.5ch;white-space:nowrap}
+.v{font-family:var(--f-var);font-style:italic;font-size:1.1em;letter-spacing:.01em}
+.calc{font-size:14px}
+.calc .row{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:4px 10px;padding:7px 0;border-top:1px dashed var(--line);align-items:baseline}
+.calc .row:first-of-type{border-top:0}
+.calc .row>span:last-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.big{font-size:20px;font-weight:600}
+.gauge{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:8px}
+.gauge>i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .35s}
+.note{font-size:13px;color:var(--muted);margin:0}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);padding:7px 13px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+details.reveal{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}
+details.reveal summary{cursor:pointer;font-weight:600;font-size:14px}
+details.reveal p{margin:8px 0 2px;font-size:14px}
+details.reveal.sum{border-color:var(--good);background:var(--good-soft)}
+.callout{border-radius:12px;padding:12px 14px;background:var(--accent-soft);font-size:14px}
+.callout b{font-weight:700}
+.eqi{font-family:var(--f-var);font-style:italic;font-size:1.15em;white-space:nowrap}
+.tablewrap{overflow-x:auto;margin-top:10px}
+table.rec{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+table.rec th,table.rec td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.rec th:first-child,table.rec td:first-child{text-align:left}
+table.rec th{font-weight:600;color:var(--muted);font-size:12px}
+table.rec td{font-family:var(--f-mono)}
+table.rec tr.new td{background:var(--accent-soft)}
+table.rec tr.tot td{font-weight:600;border-bottom:0}
+table.rec td.empty{text-align:center;color:var(--muted);font-family:var(--f-body)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-weight:600;font-size:13px}
+.badge.ok{background:var(--good-soft);color:var(--good)}
+.badge.no{background:var(--warn-soft);color:var(--warn)}
+
+.eqbig{font-size:21px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:4px 0 12px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.25}
+.frac>span:first-child{border-bottom:2px solid currentColor;padding:0 6px 2px}
+.frac>span:last-child{padding-top:2px}
+.cx{position:relative;display:inline-block}
+.cx::after{content:"";position:absolute;left:-3px;right:-3px;top:52%;height:2.5px;background:var(--warn);transform:rotate(-24deg) scaleX(0);transition:transform .45s ease}
+.cancelled .cx::after{transform:rotate(-24deg) scaleX(1)}
+.res{opacity:.28;transition:opacity .4s .3s}
+.cancelled .res{opacity:1}
+.res b{font-family:var(--f-var);font-style:italic;font-weight:700;color:var(--accent)}
+
+.lrows{display:flex;flex-direction:column;gap:8px}
+.lrow{display:grid;grid-template-columns:14px minmax(0,1fr) auto 30px;grid-template-areas:"sw sel sel x" "rng rng val val";gap:4px 8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.lrow .sw{grid-area:sw}
+.lrow select{grid-area:sel;font:inherit;font-size:14px;padding:3px 6px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0}
+.lrow .val{grid-area:val}
+.lrow input{grid-area:rng}
+.lrow .x{grid-area:x;appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;height:28px;font-size:16px;line-height:1}
+.lrow .x:disabled{opacity:.35;cursor:not-allowed}
+.colhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.colhead b{font-size:14px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:520px){.two{grid-template-columns:minmax(0,1fr)}}
+.msg{font-size:13px;color:var(--warn);margin:6px 0 0}
+.msg:empty{display:none}
+.msg.ok{color:var(--good)}
+
+.soon{border:1px dashed var(--line);border-radius:14px;padding:40px 20px;text-align:center;color:var(--muted);background:var(--surface)}
+
+svg .svgt{font-family:var(--f-body);font-size:15px;font-weight:600}
+svg .svgs{font-family:var(--f-body);font-size:13px;font-weight:500}
+svg .svgl{font-family:var(--f-body);font-size:13px;font-weight:600}
+svg .svgm{font-family:var(--f-mono);font-size:13px;font-weight:500}
+.legend-bar{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--m-granite),var(--m-basalt));border:1px solid var(--edge)}
+.legend-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-family:var(--f-mono);margin-top:4px}
+.pt{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.pt p{margin:0}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;margin-right:6px}
+.tag.ok{background:var(--good-soft);color:var(--good)}
+.tag.no{background:var(--warn-soft);color:var(--warn)}
+table.map td{font-family:var(--f-body);text-align:left;white-space:normal}
+table.map th{text-align:left}
+.quizhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.quizhead .badge{font-size:14px;padding:5px 14px}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.qgrid{grid-template-columns:minmax(0,1fr)}}
+.q .qq{margin:0 0 10px;font-weight:600;font-size:15px}
+.q .opts{display:flex;flex-direction:column;gap:6px}
+.q label{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--bg);font-size:14px}
+.q label input{accent-color:var(--accent);margin:0}
+.q label.right{border-color:var(--good);background:var(--good-soft)}
+.q label.wrong{border-color:var(--warn);background:var(--warn-soft)}
+.q .fb{font-size:13.5px;margin:8px 0 0}
+.q .fb:empty{display:none}
+table.cmp td{white-space:normal}
+table.cmp select{font:inherit;font-size:14px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%;min-width:9em}
+table.cmp td.ok select{border-color:var(--good);background:var(--good-soft)}
+table.cmp td.bad select{border-color:var(--warn);background:var(--warn-soft)}
+.probbox .probq{font-size:16px;font-weight:600;margin:0 0 10px;max-width:80ch;line-height:1.55}
+.ansrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;font-size:14px}
+.ansrow input{width:7.5em;font:inherit;font-family:var(--f-mono);font-size:15px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.ansrow .unit{color:var(--muted)}
+.ansrow .btn{padding:5px 12px}
+.fbk{font-size:13.5px;margin:6px 0 0}
+.fbk:empty{display:none}
+.fbk.ok{color:var(--good)}
+.fbk.no{color:var(--warn)}
+.eqline{font-family:var(--f-mono);font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="eyebrow">지구과학Ⅱ · Ⅰ-1 지구의 형성과 역장 · 02 지구 내부 구조 · C 지각 평형설</div>
+    <h1>지각 평형 실험실</h1>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="실험 단원">
+    <button class="tab" role="tab" id="t-pressure" data-tab="pressure" aria-controls="tab-pressure"><span class="n">1</span>압력 평형</button>
+    <button class="tab" role="tab" id="t-pratt" data-tab="pratt" aria-controls="tab-pratt"><span class="n">2</span>프래트설</button>
+    <button class="tab" role="tab" id="t-airy" data-tab="airy" aria-controls="tab-airy"><span class="n">3</span>에어리설</button>
+    <button class="tab" role="tab" id="t-principle" data-tab="principle" aria-controls="tab-principle"><span class="n">4</span>지각 평형의 원리</button>
+  </nav>
+</header>
+
+<!-- ============ TAB 1 ============ -->
+<section class="tabpanel" id="tab-pressure" role="tabpanel" aria-labelledby="t-pressure">
+  <div class="intro">
+    <h2>압력 평형</h2>
+    <p class="lead">무게와 면적에서 출발해 압력 공식 <span class="eqi">P = ρgh</span>를 직접 만들고, 같은 깊이에서 압력이 같아지는 조건을 찾아요.</p>
+  </div>
+
+  <div class="ladder" aria-label="공식이 완성되는 과정">
+    <button class="rung" data-k="1" type="button"><span class="k">1-1 압력이란?</span><span class="eq"><span class="v">P</span> = <span class="v">F</span> / <span class="v">A</span></span><span class="q">?</span></button>
+    <button class="rung" data-k="2" type="button"><span class="k">1-2 기둥의 무게</span><span class="eq"><span class="v">F</span> = <span class="v">ρ</span>·<span class="v">A</span>·<span class="v">h</span>·<span class="v">g</span></span><span class="q">?</span></button>
+    <button class="rung" data-k="3" type="button"><span class="k">1-3 면적이 사라진다</span><span class="eq"><span class="v">P</span> = <span class="v">ρ</span><span class="v">g</span><span class="v">h</span></span><span class="q">?</span></button>
+    <button class="rung" data-k="4" type="button"><span class="k">1-4 층이 쌓이면</span><span class="eq"><span class="v">P</span> = <span class="v">ρ</span>₁<span class="v">gh</span>₁ + <span class="v">ρ</span>₂<span class="v">gh</span>₂ + …</span><span class="q">?</span></button>
+    <button class="rung" data-k="5" type="button"><span class="k">1-5 압력 평형</span><span class="eq">(<span class="v">ρ</span>₁<span class="v">h</span>₁+<span class="v">ρ</span>₂<span class="v">h</span>₂+…)<sub>A</sub> = (…)<sub>B</sub></span><span class="q">?</span></button>
+  </div>
+
+  <div class="steps">
+    <button class="step" type="button" data-step="1"><span class="k">1-1</span>압력이란?</button>
+    <button class="step" type="button" data-step="2"><span class="k">1-2</span>기둥의 무게</button>
+    <button class="step" type="button" data-step="3"><span class="k">1-3</span>면적이 사라진다</button>
+    <button class="step" type="button" data-step="4"><span class="k">1-4</span>층이 쌓이면</button>
+    <button class="step" type="button" data-step="5"><span class="k">1-5</span>압력 평형</button>
+  </div>
+
+  <!-- 1-1 -->
+  <div class="steppanel" data-step="1">
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg11" viewBox="0 0 640 380" role="img" aria-label="스펀지 위에 놓인 벽돌과 바닥 면적"></svg>
+        <p class="cap">벽돌 1장 = 2.0 kg (무게 19.6 N) · 크기 19 × 9 × 5.7 cm · 스펀지가 많이 눌릴수록 압력이 커요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>벽돌 개수 (무게 바꾸기)</h3><div class="seg" id="c11n"></div></div>
+        <div class="card"><h3>놓는 방법 (바닥 면적 바꾸기)</h3><div class="seg" id="c11o"></div></div>
+        <div class="card calc" id="r11"></div>
+        <div class="card">
+          <div class="actions"><button class="btn" type="button" id="b11rec">이 결과 기록하기</button><button class="btn ghost" type="button" id="b11clr">기록 지우기</button></div>
+          <div class="tablewrap"><table class="rec" id="t11"><thead><tr><th>벽돌</th><th>놓는 방법</th><th>무게 F (N)</th><th>면적 A (cm²)</th><th>압력 P (Pa)</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <details class="reveal"><summary>생각해 보기 ① 벽돌을 1장에서 2장으로 늘리면 압력은 몇 배?</summary><p>바닥 면적은 그대로이고 무게만 2배가 되므로 압력도 2배가 돼요.</p></details>
+        <details class="reveal"><summary>생각해 보기 ② 눕혀 둔 벽돌을 세우면 압력은 몇 배?</summary><p>무게는 같고 바닥 면적이 171 cm²에서 51.3 cm²로 줄어서 압력은 약 3.3배가 돼요.</p></details>
+        <details class="reveal sum"><summary>정리 보기</summary><p>압력은 누르는 힘(무게)에 비례하고, 힘을 받는 면적에 반비례해요.<br><span class="eqi">P = F / A</span> &nbsp;(단위: N/m² = Pa)</p></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-2 -->
+  <div class="steppanel" data-step="2" hidden>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg12" viewBox="0 0 640 410" role="img" aria-label="밑면적 A, 높이 h인 암석 기둥"></svg>
+        <p class="cap">그림은 실제 비율과 달라요. 밑면적은 m², 높이는 km로 정해요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>물질 (밀도 ρ)</h3><div class="seg" id="c12m"></div></div>
+        <div class="card"><h3>기둥 크기</h3>
+          <div class="field"><label for="c12A">밑면적 <span class="v">A</span></label><input type="range" id="c12A" min="1" max="5" step="0.5" value="2"><span class="val" id="v12A"></span></div>
+          <div class="field"><label for="c12h">높이 <span class="v">h</span></label><input type="range" id="c12h" min="0.5" max="10" step="0.5" value="1"><span class="val" id="v12h"></span></div>
+        </div>
+        <div class="card calc" id="r12"></div>
+        <div class="callout"><b>무게 공식 완성</b> &nbsp;<span class="eqi">F = mg = (ρV)g = ρ·A·h·g</span><br>기둥의 무게는 밀도, 밑면적, 높이에 모두 비례해요.</div>
+        <p class="note">단위 바꾸기: 1 g/cm³ = 1,000 kg/m³ · 1 km = 1,000 m · g = 9.8 m/s²</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-3 -->
+  <div class="steppanel" data-step="3" hidden>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg13" viewBox="0 0 640 400" role="img" aria-label="밑면적이 다른 두 기둥의 무게와 압력 비교"></svg>
+        <p class="cap">두 기둥은 같은 물질, 같은 높이예요. 기둥 ②의 밑면적만 바꿔 보세요.</p>
+      </div>
+      <div class="side">
+        <div class="card" id="eq13">
+          <h3>1-1의 식에 1-2의 무게를 넣으면</h3>
+          <div class="eqbig">
+            <span class="v">P</span> =
+            <span class="frac"><span class="v">F</span><span class="v">A</span></span> =
+            <span class="frac"><span><span class="v">ρ</span>·<span class="cx v">A</span>·<span class="v">h</span>·<span class="v">g</span></span><span><span class="cx v">A</span></span></span>
+            <span class="res">= <b>ρgh</b></span>
+          </div>
+          <button class="btn" type="button" id="b13">분자·분모의 A 약분하기</button>
+        </div>
+        <div class="card"><h3>기둥 ②의 밑면적</h3>
+          <div class="field"><label for="c13A">밑면적 <span class="v">A</span></label><input type="range" id="c13A" min="1" max="5" step="0.5" value="4"><span class="val" id="v13A"></span></div>
+        </div>
+        <div class="card"><h3>두 기둥 공통</h3>
+          <div class="seg" id="c13m"></div>
+          <div class="field" style="margin-top:8px"><label for="c13h">높이 <span class="v">h</span></label><input type="range" id="c13h" min="0.5" max="10" step="0.5" value="2"><span class="val" id="v13h"></span></div>
+        </div>
+        <div class="card" id="r13"></div>
+        <div class="callout"><b>왜 중요할까?</b> 압력은 밑면적과 상관없이 밀도와 두께(높이)만으로 정해져요. 그래서 폭이 넓은 대륙이든 좁은 해양이든, 지각을 같은 굵기의 ‘기둥’으로 잘라서 비교할 수 있어요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-4 -->
+  <div class="steppanel" data-step="4" hidden>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg14" viewBox="0 0 640 430" role="img" aria-label="여러 층이 쌓인 기둥과 깊이에 따른 압력 그래프"></svg>
+        <div class="field" style="padding:4px 6px 0"><label for="c14z">깊이 측정</label><input type="range" id="c14z" min="0" max="50" step="0.25" value="25"><span class="val" id="v14z"></span></div>
+        <p class="cap">그림 위를 드래그하거나 슬라이더로 측정 깊이를 옮겨 보세요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>예시 기둥</h3><div class="seg" id="c14p"></div></div>
+        <div class="card"><h3>층 쌓기 (위 → 아래)</h3><div class="lrows" id="ed14"></div></div>
+        <div class="card"><h3>층별 압력 (P = ρgh)</h3>
+          <div class="tablewrap" style="margin-top:0"><table class="rec" id="t14"><thead><tr><th>층</th><th>ρ (g/cm³)</th><th>h (km)</th><th>ρgh (MPa)</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="callout"><b>층이 쌓이면 압력도 더해져요</b> &nbsp;<span class="eqi">P = ρ₁gh₁ + ρ₂gh₂ + …</span><br>밀도가 큰 층을 지날수록 압력이 더 빨리 늘어나서 그래프가 옆으로 더 많이 뻗어요.</div>
+        <p class="note">계산 예: 화강암 1 km → 2,700 kg/m³ × 9.8 m/s² × 1,000 m ≈ 26.5 MPa (1 MPa = 1,000,000 Pa)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-5 -->
+  <div class="steppanel" data-step="5" hidden>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg15" viewBox="0 0 640 456" role="img" aria-label="같은 깊이에서 두 기둥의 압력 비교"></svg>
+        <p class="cap">두 기둥의 바닥은 같은 깊이(보상 깊이)에 있어요. 이 깊이에서 압력이 같으면 평형이에요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>시작 상황</h3><div class="seg" id="c15p"></div></div>
+        <div class="card" id="r15"></div>
+        <div class="card">
+          <div class="actions"><button class="btn" type="button" id="b15">평형 찾기</button><span class="note">압력이 높은 쪽은 가라앉고, 낮은 쪽은 떠올라요.</span></div>
+          <p class="msg" id="m15"></p>
+        </div>
+        <div class="two">
+          <div class="card"><div class="colhead"><b>기둥 A</b><span class="note">위 → 아래</span></div><div class="lrows" id="ed15a"></div></div>
+          <div class="card"><div class="colhead"><b>기둥 B</b><span class="note">위 → 아래</span></div><div class="lrows" id="ed15b"></div></div>
+        </div>
+        <details class="reveal"><summary>미션 ① 현무암 9 km와 평형이 되려면 화강암은 몇 km?</summary><p>3.0 × 9 = 27이므로 2.7 × h = 27 → <b>h = 10 km</b>. 밀도가 작은 화강암은 더 두껍게 쌓여야 해요.</p></details>
+        <details class="reveal"><summary>미션 ② 퇴적물(2.4)로 바꾸면? 해수(1.0)로 바꾸면?</summary><p>퇴적물: 27 ÷ 2.4 = <b>11.25 km</b>, 해수: 27 ÷ 1.0 = <b>27 km</b>. 밀도가 작을수록 더 두꺼워야 같은 압력을 만들어요.</p></details>
+        <details class="reveal sum"><summary>정리 보기</summary><p>같은 깊이에서 <span class="eqi">ρ₁gh₁ + ρ₂gh₂ + …</span>가 두 기둥에서 같으면 평형이에요. <span class="eqi">g</span>는 양쪽에 똑같이 곱해져 있어서 약분돼요.<br>→ <span class="eqi">ρ₁h₁ + ρ₂h₂ + …</span> 만 비교하면 돼요. 밀도가 작은 물질은 두껍게, 밀도가 큰 물질은 얇게 쌓여야 평형을 이뤄요.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 2 ============ -->
+<section class="tabpanel" id="tab-pratt" role="tabpanel" aria-labelledby="t-pratt" hidden>
+  <div class="intro">
+    <h2>프래트설</h2>
+    <p class="lead">밀도가 서로 다른 지각이 맨틀 위에 떠 있고, 지각의 아랫부분은 편평해요. 기둥의 높이를 바꾸면 평형에 맞는 밀도가 자동으로 계산돼요.</p>
+  </div>
+  <div class="lab">
+    <div class="stage">
+      <svg id="svg2" viewBox="0 0 640 480" role="img" aria-label="프래트설 모형: 밀도가 다른 지각 기둥과 편평한 바닥"></svg>
+      <p class="cap">기둥을 눌러 고르고, 위아래로 끌어 높이를 바꿔 보세요. 기둥 안의 숫자는 밀도(g/cm³)예요. 해발 0 m 지각의 밀도 ρ₀ = 2.8 g/cm³, 보상 깊이 50 km 모형이고 실제 비율대로 그렸어요.</p>
+    </div>
+    <div class="side">
+      <div class="card"><h3>지형 고르기</h3><div class="seg" id="c2p"></div></div>
+      <div class="card">
+        <h3 id="h2sel">선택한 기둥</h3>
+        <div class="field"><label for="c2h">해발 고도</label><input type="range" id="c2h" min="-5" max="6" step="0.1" value="4"><span class="val" id="v2h"></span></div>
+        <div class="calc" id="r2"></div>
+      </div>
+      <div class="card">
+        <h3>밀도 색</h3>
+        <div class="legend-bar" aria-hidden="true"></div>
+        <div class="legend-row"><span>2.5 (가벼움)</span><span>2.75</span><span>3.0 (무거움)</span></div>
+      </div>
+      <div class="card" id="r2chk"></div>
+      <details class="reveal"><summary>생각해 보기 산맥을 더 높이 솟게 하면 그 아래 지각의 밀도는?</summary><p>더 작아져요. 바닥이 같은 깊이에 있으니 더 높은 기둥은 더 길어요. 같은 압력이 되려면 더 가벼운(밀도가 작은) 물질이어야 해요.</p></details>
+      <details class="reveal sum"><summary>정리 보기</summary><p>· 지각의 아랫부분(모호면)은 편평해요.<br>· 높이 솟은 지역은 밀도가 작고, 낮은 지역(해양)은 밀도가 커요.<br>· 같은 깊이에서 모든 기둥의 ρh 합이 같아요: <span class="eqi">ρ × (D + h) = ρ₀ × D</span></p></details>
+      <div class="card pt">
+        <h3>실제 지구와 비교</h3>
+        <p><span class="tag ok">타당한 점</span>실제로 대륙 지각(화강암질, 약 2.7)과 해양 지각(현무암질, 약 3.0)의 밀도가 달라요.</p>
+        <p><span class="tag no">맞지 않는 점</span>실제 모호면은 편평하지 않아요. 대륙 아래는 깊고 해양 아래는 얕아요.</p>
+        <div class="actions" style="margin-top:4px"><button class="btn ghost" type="button" id="b2moho" aria-pressed="false">실제 모호면(대략) 겹쳐 보기</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 3 ============ -->
+<section class="tabpanel" id="tab-airy" role="tabpanel" aria-labelledby="t-airy" hidden>
+  <div class="intro">
+    <h2>에어리설</h2>
+    <p class="lead">밀도가 같은 지각이 맨틀 위에 떠 있고, 높이 솟은 곳일수록 지각의 아랫부분이 깊어요. 나무 도막 실험에서 시작해 실제 지각, 조륙 운동까지 이어 봐요.</p>
+  </div>
+  <div class="steps">
+    <button class="step" type="button" data-step="1"><span class="k">3-1</span>나무 도막 실험</button>
+    <button class="step" type="button" data-step="2"><span class="k">3-2</span>지각의 뿌리</button>
+    <button class="step" type="button" data-step="3"><span class="k">3-3</span>조륙 운동</button>
+  </div>
+
+  <!-- 3-1 -->
+  <div class="steppanel" data-step="1">
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg31" viewBox="0 0 640 420" role="img" aria-label="두께가 다른 나무 도막이 물에 떠 있는 모습"></svg>
+        <p class="cap">교과서 탐구: 단면적과 밀도가 같고 두께가 다른 나무 도막(밀도 0.6 g/cm³)을 물(1.0 g/cm³)에 띄웠어요. 도막 옆 숫자는 위쪽이 물 위 높이, 아래쪽이 물속 깊이(cm)예요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>도막 고르기</h3><div class="seg" id="c31s"></div></div>
+        <div class="card">
+          <h3 id="h31">도막</h3>
+          <div class="field"><label for="c31T">두께</label><input type="range" id="c31T" min="3" max="12" step="0.5" value="10"><span class="val" id="v31T"></span></div>
+          <div class="field"><label for="c31I">얼음</label><input type="range" id="c31I" min="0" max="4" step="0.1" value="0"><span class="val" id="v31I"></span></div>
+          <div class="actions" style="margin-top:6px"><button class="btn" type="button" id="b31on">얼음 올리기</button><button class="btn ghost" type="button" id="b31melt">얼음 녹이기</button></div>
+        </div>
+        <div class="card"><div class="tablewrap" style="margin-top:0"><table class="rec" id="t31"><thead><tr><th>도막</th><th>두께</th><th>얼음</th><th>물 위</th><th>물속</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="callout"><b>에어리설의 원리</b> 물 위로 높이 드러난 도막일수록 물속에 깊이 잠겨요. 얼음이 없으면 모든 도막이 두께의 40%만 물 위에, 60%는 물속에 있어요.</div>
+        <div class="card">
+          <h3>실험과 실제</h3>
+          <div class="tablewrap" style="margin-top:0"><table class="rec map"><thead><tr><th>실험</th><th>실제 지구</th></tr></thead><tbody>
+            <tr><td>물</td><td>맨틀</td></tr><tr><td>나무 도막</td><td>지각</td></tr><tr><td>얼음을 올릴 때</td><td>침강</td></tr><tr><td>얼음이 녹을 때</td><td>융기</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-2 -->
+  <div class="steppanel" data-step="2" hidden>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg32" viewBox="0 0 640 480" role="img" aria-label="에어리설 모형: 밀도가 같은 지각과 깊이가 다른 모호면"></svg>
+        <p class="cap">기둥을 눌러 고르고 위아래로 끌어 보세요. 지각은 모두 2.7 g/cm³, 맨틀은 3.3 g/cm³예요. 해발 0 m 지각의 두께를 30 km로 잡은 모형이고 실제 비율대로 그렸어요.</p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>지형 고르기</h3><div class="seg" id="c32p"></div></div>
+        <div class="card">
+          <h3 id="h32sel">선택한 기둥</h3>
+          <div class="field"><label for="c32h">해발 고도</label><input type="range" id="c32h" min="-5" max="4" step="0.1" value="4"><span class="val" id="v32h"></span></div>
+          <div class="calc" id="r32"></div>
+        </div>
+        <div class="card" id="r32chk"></div>
+        <details class="reveal"><summary>뿌리 공식은 어떻게 나올까? (탭 1과 연결)</summary><p>산 기둥과 해발 0 m 기둥을 산의 뿌리 끝 깊이에서 비교해요. 산 쪽은 지각이 h + r만큼 더 있고, 해발 0 m 기둥은 그 자리에 맨틀이 r만큼 있어요.<br><span class="eqi">ρc(h + r) = ρm·r</span> → <span class="eqi">r = h × ρc ÷ (ρm − ρc)</span><br>= h × 2.7 ÷ 0.6 = <b>4.5 × h</b></p></details>
+        <details class="reveal sum"><summary>정리 보기</summary><p>· 지각의 밀도는 어디서나 같아요.<br>· 높이 솟은 곳일수록 지각이 두껍고 모호면이 깊어요. 산 높이의 약 4.5배만큼 뿌리가 내려가요.<br>· 바다처럼 낮은 곳은 지각이 얇고 모호면이 얕아요.</p></details>
+        <div class="card pt">
+          <h3>실제 지구와 비교</h3>
+          <p><span class="tag ok">타당한 점</span>실제 모호면의 깊이는 지역마다 달라요. 대륙 아래는 깊고(약 35 km), 높은 산맥 아래는 더 깊고, 해양 아래는 얕아요.</p>
+          <p><span class="tag no">맞지 않는 점</span>실제 대륙 지각과 해양 지각은 밀도가 달라요. 이 점은 프래트설이 더 잘 설명해요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-3 -->
+  <div class="steppanel" data-step="3" hidden>
+    <div class="seg" id="c33s" style="margin-bottom:12px"></div>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg33" viewBox="0 0 640 550" role="img" aria-label="조륙 운동 모형"></svg>
+        <p class="cap" id="cap33"></p>
+      </div>
+      <div class="side">
+        <div class="card" id="ctl33"></div>
+        <div class="card" id="r33"></div>
+        <div class="callout" id="k33"></div>
+        <div class="card">
+          <h3>교과서 정리: 조륙 운동</h3>
+          <div class="tablewrap" style="margin-top:0"><table class="rec map"><thead><tr><th>구분</th><th>융기</th><th>침강</th></tr></thead><tbody>
+            <tr><td>정의</td><td>지각이 위로 솟아오름</td><td>지각이 아래로 가라앉음</td></tr>
+            <tr><td>발생 지역</td><td>풍화·침식으로<br>지각의 무게가 줄어든 곳</td><td>퇴적물이 쌓여<br>지각의 무게가 늘어난 곳</td></tr>
+            <tr><td>예</td><td>스칸디나비아반도</td><td>우리나라 서해안(다도해)</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 4 ============ -->
+<section class="tabpanel" id="tab-principle" role="tabpanel" aria-labelledby="t-principle" hidden>
+  <div class="intro">
+    <h2>지각 평형의 원리</h2>
+    <p class="lead">교과서 그림 그대로, 대륙 지각과 해양 지각이 약 50 km 깊이에서 같은 압력으로 평형을 이루는 모습을 확인하고, 그 원리로 침식과 융기 문제를 풀어 봐요.</p>
+  </div>
+  <div class="steps">
+    <button class="step" type="button" data-step="1"><span class="k">4-1</span>원리 따라가기</button>
+    <button class="step" type="button" data-step="2"><span class="k">4-2</span>문제 풀기: 침식과 융기</button>
+    <button class="step" type="button" data-step="3"><span class="k">4-3</span>정리 퀴즈</button>
+  </div>
+
+  <div class="steppanel" data-step="1">
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg41" viewBox="0 0 640 500" role="img" aria-label="대륙 지각과 해양 지각 기둥의 압력 비교"></svg>
+        <div class="field" style="padding:4px 6px 0"><label for="c41z">깊이</label><input type="range" id="c41z" min="0" max="50" step="0.5" value="50"><span class="val" id="v41z"></span></div>
+        <p class="cap">ρ = 밀도(g/cm³). 슬라이더나 ‘압력 쌓아 보기’로 깊이에 따라 두 기둥의 압력이 쌓이는 모습을 볼 수 있어요.</p>
+      </div>
+      <div class="side">
+        <div class="card">
+          <div class="seg" id="c41s"></div>
+          <div id="t41" class="pt" style="margin-top:10px"></div>
+          <div class="actions" style="margin-top:10px"><button class="btn ghost" type="button" id="b41prev">이전</button><button class="btn ghost" type="button" id="b41next">다음</button><button class="btn" type="button" id="b41play">압력 쌓아 보기</button></div>
+        </div>
+        <div class="card" id="r41"></div>
+        <details class="reveal" id="x41">
+          <summary>더 탐구하기: 교과서 수치는 왜 딱 맞지 않을까?</summary>
+          <p>그림은 이해를 돕기 위한 개략적인 수치라서 50 km에서 두 값이 약 6% 차이 나요. 실제 대륙 지각은 아래로 갈수록 밀도가 큰 암석이 있어서 평균 밀도가 2.7보다 크고(약 2.8 이상), 대륙 표면은 해수면보다 높아요. 값을 바꿔서 평형을 맞춰 보세요.</p>
+          <div class="field"><label for="c41rc">대륙 지각 평균 밀도</label><input type="range" id="c41rc" min="2.6" max="3.0" step="0.01" value="2.7"><span class="val" id="v41rc"></span></div>
+          <div class="field"><label for="c41T">대륙 지각 두께</label><input type="range" id="c41T" min="15" max="45" step="0.5" value="35"><span class="val" id="v41T"></span></div>
+          <div class="field"><label for="c41e">대륙 해발 고도</label><input type="range" id="c41e" min="0" max="3" step="0.1" value="0"><span class="val" id="v41e"></span></div>
+          <div class="actions" style="margin-top:6px"><button class="btn" type="button" id="b41fit">평형이 되는 두께 계산</button><button class="btn ghost" type="button" id="b41book">교과서 수치로</button></div>
+          <p class="note" style="margin-top:8px">해 보기: 평균 밀도 2.85, 해발 고도 0.8 km로 두고 ‘평형이 되는 두께 계산’을 눌러 보세요.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="steppanel" data-step="2" hidden>
+    <div class="card probbox" style="margin-bottom:14px">
+      <h3>문제 <span id="n4e"></span></h3>
+      <p class="probq" id="q4e"></p>
+      <div class="actions"><button class="btn ghost" type="button" id="b4eorig">기본 문제</button><button class="btn" type="button" id="b4enew">변형 문제 만들기</button><span class="note" id="s4ecount"></span></div>
+    </div>
+    <div class="lab">
+      <div class="stage">
+        <svg id="svg4e" viewBox="0 0 640 540" role="img" aria-label="침식 전 기둥과 침식 후 기둥의 압력 비교"></svg>
+        <div class="field" style="padding:4px 6px 0"><label for="c4ex">상승 높이 <span class="v">x</span></label><input type="range" id="c4ex" min="0" max="7" step="0.01" value="0"><span class="val" id="v4ex"></span></div>
+        <p class="cap">오른쪽은 산맥이 깎여 나간 뒤의 기둥이에요. 슬라이더로 지각을 띄워 올려, 기준 깊이에서 두 기둥의 ρh 합이 같아지는 x를 찾아보세요.</p>
+      </div>
+      <div class="side">
+        <div class="card">
+          <div class="seg" id="c4es"></div>
+          <div id="t4e" class="pt" style="margin-top:12px"></div>
+          <div class="actions" style="margin-top:12px"><button class="btn ghost" type="button" id="b4eprev">이전</button><button class="btn ghost" type="button" id="b4enext">다음</button></div>
+        </div>
+        <div class="card" id="r4e"></div>
+        <details class="reveal"><summary>더 생각해 보기: 떠오른 땅은 그 뒤에 어떻게 될까?</summary><p>지각이 x만큼 떠올라서 지표는 처음 산꼭대기보다 조금만 낮아졌어요. 땅이 여전히 높으니 침식이 또 일어나고, 깎일 때마다 다시 조금씩 떠올라요. 이렇게 침식과 융기가 되풀이되면서 산맥의 뿌리도 점점 줄어들어요.</p><div class="actions" style="margin-top:8px"><button class="btn ghost" type="button" id="b4elink">3-3 침식 시뮬레이션에서 확인하기</button></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="steppanel" data-step="3" hidden>
+    <div class="quizhead">
+      <div class="badge ok" id="q42score">0 / 0</div>
+      <button class="btn ghost" type="button" id="b42reset">처음부터 다시</button>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>프래트설과 에어리설 비교표 채우기</h3>
+      <div class="tablewrap" style="margin-top:0"><table class="rec cmp" id="cmp42"><thead><tr><th>구분</th><th>프래트설</th><th>에어리설</th></tr></thead><tbody></tbody></table></div>
+      <div class="actions" style="margin-top:10px"><button class="btn" type="button" id="b42cmp">채점하기</button><span class="note" id="n42cmp"></span></div>
+    </div>
+    <div class="qgrid" id="quiz42"></div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+'use strict';
+/* ---------- 공통 도구 ---------- */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const NS='http://www.w3.org/2000/svg';
+function S(tag,a,p){const e=document.createElementNS(NS,tag);if(a)for(const k in a){const v=a[k];if(v==null)continue;if(k==='text'){e.textContent=v;continue}
+  if((k==='fill'||k==='stroke')&&/^(var\(|color-mix)/.test(String(v))){e.style[k]=v;continue}e.setAttribute(k,v)}if(p)p.appendChild(e);return e}
+function H(tag,a,...kids){const e=document.createElement(tag);if(a)for(const k in a){const v=a[k];if(v==null||v===false)continue;
+  if(k==='class')e.className=v;else if(k==='html')e.innerHTML=v;else if(k.slice(0,2)==='on')e[k]=v;else e.setAttribute(k,v===true?'':v)}
+  kids.forEach(c=>{if(c!=null)e.append(c)});return e}
+const G=9.8;
+const MAT={
+  water:{name:'해수',rho:1.0,fill:'var(--m-water)',ink:'var(--m-water-ink)'},
+  sed:{name:'퇴적물',rho:2.4,fill:'var(--m-sed)',ink:'var(--m-sed-ink)'},
+  granite:{name:'화강암',rho:2.7,fill:'var(--m-granite)',ink:'var(--m-granite-ink)'},
+  basalt:{name:'현무암',rho:3.0,fill:'var(--m-basalt)',ink:'var(--m-basalt-ink)'},
+  mantle:{name:'맨틀',rho:3.3,fill:'var(--m-mantle)',ink:'var(--m-mantle-ink)'}
+};
+const ORDER=['water','sed','granite','basalt','mantle'];
+const nf=(n,d)=>Number(n).toLocaleString('ko-KR',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sci(n,d){d=d==null?2:d;if(!isFinite(n))return '—';if(Math.abs(n)<1e5)return nf(n,Math.abs(n)<10?d:0);
+  let e=Math.floor(Math.log10(Math.abs(n)));let m=n/Math.pow(10,e);if(Math.abs(Number(m.toFixed(d)))>=10){m/=10;e+=1}
+  return m.toFixed(d)+' × 10'+String(e).split('').map(c=>SUP[+c]).join('')}
+const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tween(ms,fn,done){if(reduceMotion||ms<=0){fn(1);if(done)done();return}const t0=performance.now();
+  (function f(t){const k=Math.min(1,(t-t0)/ms);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;fn(e);if(k<1)requestAnimationFrame(f);else if(done)done()})(t0)}
+function arrow(p,x1,y1,x2,y2,col,w){w=w||2;S('line',{x1,y1,x2,y2,stroke:col,'stroke-width':w,'stroke-linecap':'round'},p);
+  const a=Math.atan2(y2-y1,x2-x1),L=10,W=5.5;
+  const pts=[[x2,y2],[x2-L*Math.cos(a)+W*Math.sin(a),y2-L*Math.sin(a)-W*Math.cos(a)],[x2-L*Math.cos(a)-W*Math.sin(a),y2-L*Math.sin(a)+W*Math.cos(a)]];
+  S('polygon',{points:pts.map(q=>q.map(v=>v.toFixed(1)).join(',')).join(' '),fill:col},p)}
+function seg(host,items,get,set){host.replaceChildren();items.forEach(it=>{const b=H('button',{type:'button','aria-pressed':String(get()===it.value)},
+  it.swatch?H('span',{class:'sw',style:'background:'+it.swatch}):null,it.label);
+  b.onclick=()=>{set(it.value);[...host.children].forEach((c,i)=>c.setAttribute('aria-pressed',String(items[i].value===get())))};host.append(b)})}
+const matItems=()=>ORDER.map(m=>({value:m,label:MAT[m].name+' '+MAT[m].rho.toFixed(1),swatch:MAT[m].fill}));
+function niceCeil(v){const e=Math.pow(10,Math.floor(Math.log10(v)));const m=v/e;return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*e}
+function svgPoint(svg,evt){const pt=svg.createSVGPoint();pt.x=evt.clientX;pt.y=evt.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+const sumH=L=>L.reduce((a,l)=>a+l.h,0);
+const sumRH=L=>L.reduce((a,l)=>a+MAT[l.mat].rho*l.h,0);
+function prism(p,o){/* o: x,y(앞 아래 왼쪽), w, h, dx, dy, fill */
+  const {x,y,w,h,dx,dy,fill}=o;const g=S('g',{},p);
+  const side=`${x+w},${y} ${x+w+dx},${y+dy} ${x+w+dx},${y+dy-h} ${x+w},${y-h}`;
+  const top=`${x},${y-h} ${x+w},${y-h} ${x+w+dx},${y+dy-h} ${x+dx},${y+dy-h}`;
+  S('polygon',{points:side,fill},g);S('polygon',{points:side,fill:'var(--shade-lo)'},g);
+  S('polygon',{points:top,fill},g);S('polygon',{points:top,fill:'var(--shade-hi)'},g);
+  S('rect',{x,y:y-h,width:w,height:h,fill},g);
+  const st={fill:'none',stroke:'var(--edge)','stroke-width':1.2};
+  S('polygon',Object.assign({points:side},st),g);S('polygon',Object.assign({points:top},st),g);S('rect',Object.assign({x,y:y-h,width:w,height:h},st),g);
+  const hid={stroke:'var(--edge)','stroke-width':1,'stroke-dasharray':'4 4',opacity:.8};
+  S('line',Object.assign({x1:x,y1:y,x2:x+dx,y2:y+dy},hid),g);S('line',Object.assign({x1:x+dx,y1:y+dy,x2:x+w+dx,y2:y+dy},hid),g);
+  S('line',Object.assign({x1:x+dx,y1:y+dy,x2:x+dx,y2:y+dy-h},hid),g);
+  return g}
+
+/* 층 편집기 (1-4, 1-5에서 공통 사용) */
+function layerEditor(host,getL,onChange,id){
+  function render(){host.replaceChildren();const L=getL();
+    L.forEach((ly,i)=>{const row=H('div',{class:'lrow'});
+      const sw=H('span',{class:'sw',style:'background:'+MAT[ly.mat].fill});
+      const sel=H('select',{id:id+'-m'+i,'aria-label':(i+1)+'번째 층 물질'});
+      ORDER.forEach(m=>{const o=H('option',{value:m},MAT[m].name+' ('+MAT[m].rho.toFixed(1)+')');if(m===ly.mat)o.selected=true;sel.append(o)});
+      sel.onchange=()=>{ly.mat=sel.value;render();onChange()};
+      const val=H('span',{class:'val'},nf(ly.h,2)+' km');
+      const rng=H('input',{type:'range',min:'0.25',max:'50',step:'0.25',value:String(ly.h),id:id+'-h'+i,'aria-label':(i+1)+'번째 층 두께(km)'});
+      rng.oninput=()=>{ly.h=+rng.value;val.textContent=nf(ly.h,2)+' km';onChange()};
+      const del=H('button',{type:'button',class:'x','aria-label':(i+1)+'번째 층 빼기',title:'이 층 빼기'},'×');del.disabled=L.length<=1;
+      del.onclick=()=>{L.splice(i,1);render();onChange()};
+      row.append(sw,sel,val,rng,del);host.append(row)});
+    const add=H('button',{type:'button',class:'btn ghost'},'+ 층 추가');add.disabled=L.length>=5;
+    add.onclick=()=>{L.push({mat:'granite',h:5});render();onChange()};host.append(add)}
+  render();return {render}}
+
+/* ---------- 탭 · 단계 이동 ---------- */
+const TABS=['pressure','pratt','airy','principle'];
+const lastStep={pressure:1,pratt:1,airy:1,principle:1};
+const hooks={};
+let maxSeen=1;
+function ladder(st){maxSeen=Math.max(maxSeen,st);$$('.rung').forEach(r=>{const k=+r.dataset.k;r.classList.toggle('locked',k>maxSeen);r.classList.toggle('current',k===st)})}
+function selectTab(tab,st){
+  $$('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
+  $$('.tabpanel').forEach(s=>{s.hidden=(s.id!=='tab-'+tab)});
+  const sec=$('#tab-'+tab);const panels=$$('.steppanel',sec);
+  if(panels.length){if(!panels.some(p=>+p.dataset.step===st))st=1;lastStep[tab]=st;
+    $$('.step',sec).forEach(b=>{if(+b.dataset.step===st)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});
+    panels.forEach(p=>{p.hidden=(+p.dataset.step!==st)})}
+  if(tab==='pressure')ladder(st);
+  const f=hooks[tab+'-'+st]||hooks[tab];if(f)f()}
+function route(){const h=(location.hash||'').slice(1).split('-');let tab=h[0];if(TABS.indexOf(tab)<0)tab='pressure';
+  const st=+h[1]||lastStep[tab];selectTab(tab,st)}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tab;const h=t+'-'+lastStep[t];if(location.hash==='#'+h)route();else location.hash=h}));
+$$('.step').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('.tabpanel').id.slice(4);const h=t+'-'+b.dataset.step;if(location.hash==='#'+h)route();else location.hash=h}));
+$$('.rung').forEach(b=>b.addEventListener('click',()=>{location.hash='pressure-'+b.dataset.k}));
+window.addEventListener('hashchange',route);
+
+/* ======================================================
+   1-1 압력이란? (벽돌과 스펀지)
+   ====================================================== */
+const BRICK={mass:2.0,dims:{flat:{w:19,h:5.7,d:9,label:'눕히기'},side:{w:19,h:9,d:5.7,label:'옆으로 세우기'},up:{w:9,h:19,d:5.7,label:'세우기'}}};
+const s11={n:1,o:'flat',rec:[]};
+const PMAX11=4*BRICK.mass*G/(9*5.7/1e4);
+function calc11(){const d=BRICK.dims[s11.o];const F=s11.n*BRICK.mass*G;const Acm=d.w*d.d;const A=Acm/1e4;return {d,F,Acm,A,P:F/A}}
+function draw11(){
+  const svg=$('#svg11');svg.replaceChildren();
+  const {d,F,Acm,P}=calc11();
+  const k=3,cx=290,top=296,sx0=100,sx1=480,sh=54;
+  const dent=3+P/PMAX11*24;
+  const bw=d.w*k,bh=d.h*k,x0=cx-bw/2,x1=cx+bw/2;
+  S('rect',{x:60,y:top+sh,width:460,height:10,rx:2,fill:'var(--surface-2)'},svg);
+  const path=`M${sx0},${top} L${x0-16},${top} C${x0-6},${top} ${x0-4},${top+dent} ${x0},${top+dent} L${x1},${top+dent} C${x1+4},${top+dent} ${x1+6},${top} ${x1+16},${top} L${sx1},${top} L${sx1},${top+sh} L${sx0},${top+sh} Z`;
+  const defs=S('defs',{},svg);const cp=S('clipPath',{id:'clip11'},defs);S('path',{d:path},cp);
+  S('path',{d:path,fill:'var(--m-sponge)'},svg);
+  const pores=S('g',{'clip-path':'url(#clip11)'},svg);
+  for(let i=0;i<70;i++){const px=sx0+6+((i*73)%368);const py=top+6+((i*37)%(sh-10));const pr=1.6+((i*13)%5)*.35;S('circle',{cx:px,cy:py,r:pr,fill:'var(--m-sponge-dk)',opacity:.7},pores)}
+  S('rect',{x:x0,y:top+dent,width:bw,height:Math.min(sh-dent-3,dent*1.2+6),fill:'var(--m-sponge-dk)',opacity:.45,'clip-path':'url(#clip11)'},svg);
+  S('path',{d:path,fill:'none',stroke:'var(--m-sponge-dk)','stroke-width':1.5},svg);
+  for(let i=0;i<s11.n;i++){const y=top+dent-(i+1)*bh;
+    S('rect',{x:x0,y,width:bw,height:bh,rx:2,fill:'var(--m-brick)',stroke:'var(--surface)','stroke-width':1.5},svg);
+    S('rect',{x:x0+3,y:y+3,width:bw-6,height:Math.max(1,bh*.18),rx:1,fill:'var(--shade-hi)'},svg)}
+  const stTop=top+dent-s11.n*bh;
+  arrow(svg,cx,stTop-58,cx,stTop-8,'var(--ink)',2.5);
+  S('text',{x:cx+12,y:stTop-36,class:'svgt',fill:'var(--ink)',text:'F = '+nf(F,1)+' N'},svg);
+  S('text',{x:sx0,y:top+sh+30,class:'svgs',fill:'var(--muted)',text:'스펀지'},svg);
+  S('text',{x:sx1,y:top+sh+30,'text-anchor':'end',class:'svgm',fill:'var(--ink)',text:'P = '+nf(P,0)+' Pa'},svg);
+  /* 위에서 본 바닥 면적 */
+  const ix=448,iy=22,iw=180,ih=122;
+  S('rect',{x:ix,y:iy,width:iw,height:ih,rx:10,fill:'var(--bg)',stroke:'var(--line)'},svg);
+  S('text',{x:ix+12,y:iy+20,class:'svgs',fill:'var(--muted)',text:'바닥 면적 (위에서 본 모양)'},svg);
+  const q=4,fw=d.w*q,fd=d.d*q,fx=ix+iw/2-fw/2,fy=iy+30+(ih-30-30)/2-fd/2;
+  S('rect',{x:fx,y:fy,width:fw,height:fd,fill:'var(--m-brick)',opacity:.9},svg);
+  for(let gx=fx;gx<=fx+fw+.1;gx+=q*2)S('line',{x1:gx,x2:gx,y1:fy,y2:fy+fd,stroke:'var(--surface)','stroke-width':.6,opacity:.6},svg);
+  for(let gy=fy;gy<=fy+fd+.1;gy+=q*2)S('line',{x1:fx,x2:fx+fw,y1:gy,y2:gy,stroke:'var(--surface)','stroke-width':.6,opacity:.6},svg);
+  S('text',{x:ix+iw/2,y:iy+ih-12,'text-anchor':'middle',class:'svgm',fill:'var(--ink)',text:d.w+' × '+d.d+' = '+nf(Acm,1)+' cm²'},svg);
+  /* 계산 패널 */
+  const A=Acm/1e4;
+  $('#r11').innerHTML='<h3>계산</h3>'+
+    '<div class="row"><span>무게 <i class="v">F</i></span><span>'+s11.n+' × 19.6 N = <b>'+nf(F,1)+' N</b></span></div>'+
+    '<div class="row"><span>면적 <i class="v">A</i></span><span>'+d.w+' × '+d.d+' = '+nf(Acm,1)+' cm² = <b>'+A.toFixed(5)+' m²</b></span></div>'+
+    '<div class="row"><span>압력 <i class="v">P</i></span><span>'+nf(F,1)+' ÷ '+A.toFixed(5)+' = <b class="big">'+nf(P,0)+' Pa</b></span></div>'+
+    '<div class="gauge" aria-hidden="true"><i style="width:'+(P/PMAX11*100).toFixed(1)+'%"></i></div>'}
+function table11(){const tb=$('#t11 tbody');tb.replaceChildren();
+  if(!s11.rec.length){tb.append(H('tr',{},H('td',{colspan:'5',class:'empty'},'‘이 결과 기록하기’를 누르면 여기에 쌓여요.')));return}
+  s11.rec.forEach((r,i)=>tb.append(H('tr',{class:i===s11.rec.length-1?'new':null},H('td',{},r.n+'장'),H('td',{},r.o),H('td',{},nf(r.F,1)),H('td',{},nf(r.Acm,1)),H('td',{},nf(r.P,0)))))}
+seg($('#c11n'),[1,2,3,4].map(v=>({value:v,label:v+'장'})),()=>s11.n,v=>{s11.n=v;draw11()});
+seg($('#c11o'),Object.keys(BRICK.dims).map(k=>({value:k,label:BRICK.dims[k].label})),()=>s11.o,v=>{s11.o=v;draw11()});
+$('#b11rec').onclick=()=>{const c=calc11();s11.rec.push({n:s11.n,o:c.d.label,F:c.F,Acm:c.Acm,P:c.P});if(s11.rec.length>10)s11.rec.shift();table11()};
+$('#b11clr').onclick=()=>{s11.rec=[];table11()};
+hooks['pressure-1']=()=>{draw11();table11()};
+
+/* ======================================================
+   1-2 기둥의 무게
+   ====================================================== */
+const s12={mat:'granite',A:2,h:1};
+function draw12(){
+  const svg=$('#svg12');svg.replaceChildren();
+  const m=MAT[s12.mat];
+  const w=54+Math.sqrt(s12.A)*38,dx=w*.45,dy=-w*.3,hp=20+s12.h*28;
+  const base=352,x=230-w/2;
+  S('ellipse',{cx:x+w/2+dx/2,cy:base+dy/2+4,rx:w*.85,ry:14,fill:'var(--surface-2)'},svg);
+  prism(svg,{x,y:base,w,h:hp,dx,dy,fill:m.fill});
+  /* 밑면 강조 */
+  S('polygon',{points:`${x},${base} ${x+w},${base} ${x+w+dx},${base+dy} ${x+dx},${base+dy}`,fill:'var(--accent)',opacity:.18},svg);
+  /* 높이 치수 */
+  const hx=x-22;S('line',{x1:hx,x2:hx,y1:base,y2:base-hp,stroke:'var(--ink)','stroke-width':1.5},svg);
+  S('line',{x1:hx-6,x2:hx+6,y1:base,y2:base,stroke:'var(--ink)','stroke-width':1.5},svg);S('line',{x1:hx-6,x2:hx+6,y1:base-hp,y2:base-hp,stroke:'var(--ink)','stroke-width':1.5},svg);
+  S('text',{x:hx-10,y:base-hp/2+5,'text-anchor':'end',class:'svgt',fill:'var(--ink)',text:'h = '+nf(s12.h,1)+' km'},svg);
+  /* 밑면적 라벨 */
+  const bx=x+w+dx*.6,by=base+dy*.5;
+  S('line',{x1:x+w*.55+dx*.5,y1:base+dy*.5,x2:bx+40,y2:by+30,stroke:'var(--accent)','stroke-width':1.5},svg);
+  S('circle',{cx:x+w*.55+dx*.5,cy:base+dy*.5,r:3.5,fill:'var(--accent)'},svg);
+  S('text',{x:bx+44,y:by+35,class:'svgt',fill:'var(--accent)',text:'밑면적 A = '+nf(s12.A,1)+' m²'},svg);
+  /* 밀도 라벨 */
+  if(hp>48){S('text',{x:x+w/2,y:base-hp/2+5,'text-anchor':'middle',class:'svgl',fill:m.ink,text:m.name},svg);
+    S('text',{x:x+w/2,y:base-hp/2+23,'text-anchor':'middle',class:'svgm',fill:m.ink,text:'ρ = '+nf(m.rho*1000)+' kg/m³'},svg)}
+  /* 무게 화살표 */
+  arrow(svg,x+w/2,base+8,x+w/2,base+46,'var(--ink)',2.5);
+  S('text',{x:x+w/2+12,y:base+36,class:'svgt',fill:'var(--ink)',text:'F (기둥의 무게)'},svg);
+  /* 계산 */
+  const rho=m.rho*1000,hm=s12.h*1000,V=s12.A*hm,mass=rho*V,F=mass*G;
+  $('#v12A').textContent=nf(s12.A,1)+' m²';$('#v12h').textContent=nf(s12.h,1)+' km';
+  $('#r12').innerHTML='<h3>무게 구하기 (순서대로)</h3>'+
+    '<div class="row"><span>① 부피 <i class="v">V</i></span><span><i class="v">A</i> × <i class="v">h</i> = '+nf(s12.A,1)+' m² × '+nf(hm)+' m = <b>'+sci(V)+' m³</b></span></div>'+
+    '<div class="row"><span>② 질량 <i class="v">m</i></span><span><i class="v">ρ</i> × <i class="v">V</i> = '+nf(rho)+' kg/m³ × '+sci(V)+' m³ = <b>'+sci(mass)+' kg</b></span></div>'+
+    '<div class="row"><span>③ 무게 <i class="v">F</i></span><span><i class="v">m</i> × <i class="v">g</i> = '+sci(mass)+' kg × 9.8 m/s² = <b class="big">'+sci(F)+' N</b></span></div>'}
+seg($('#c12m'),matItems(),()=>s12.mat,v=>{s12.mat=v;draw12()});
+$('#c12A').oninput=e=>{s12.A=+e.target.value;draw12()};
+$('#c12h').oninput=e=>{s12.h=+e.target.value;draw12()};
+hooks['pressure-2']=draw12;
+
+/* ======================================================
+   1-3 면적이 사라진다
+   ====================================================== */
+const s13={mat:'granite',h:2,A:4};
+function draw13(){
+  const svg=$('#svg13');svg.replaceChildren();
+  const m=MAT[s13.mat],rho=m.rho*1000,hm=s13.h*1000;
+  const base=318;
+  const cols=[{A:1,cx:120,lab:'①'},{A:s13.A,cx:322,lab:'②'}];
+  cols.forEach(c=>{const w=40+Math.sqrt(c.A)*34,dx=w*.45,dy=-w*.3,hp=24+s13.h*24;const x=c.cx-w/2-dx/2;
+    prism(svg,{x,y:base,w,h:hp,dx,dy,fill:m.fill});
+    S('polygon',{points:`${x},${base} ${x+w},${base} ${x+w+dx},${base+dy} ${x+dx},${base+dy}`,fill:'var(--accent)',opacity:.18},svg);
+    c.F=rho*c.A*hm*G;c.P=c.F/c.A;
+    S('text',{x:c.cx,y:base+26,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:'기둥 '+c.lab+' · A = '+nf(c.A,1)+' m²'},svg);
+    S('text',{x:c.cx,y:base+46,'text-anchor':'middle',class:'svgm',fill:'var(--muted)',text:'F = '+sci(c.F)+' N'},svg);
+    S('text',{x:c.cx,y:base+66,'text-anchor':'middle',class:'svgm',fill:'var(--accent)',text:'P = '+sci(c.P)+' Pa'},svg)});
+  /* 막대 비교 */
+  const gx=456,gw=172,bb=base,bh=200;
+  S('rect',{x:gx-8,y:bb-bh-50,width:gw+16,height:bh+90,rx:10,fill:'var(--bg)',stroke:'var(--line)'},svg);
+  const Fmax=rho*5*hm*G,Pmax=3300*10000*G;
+  const groups=[{t:'무게 F',vals:cols.map(c=>c.F/Fmax),x:gx+10,col:'var(--muted)'},{t:'압력 P',vals:cols.map(c=>c.P/Pmax),x:gx+96,col:'var(--accent)'}];
+  groups.forEach(g=>{g.vals.forEach((v,i)=>{const hh=Math.max(2,v*bh);const bx=g.x+i*34;
+      S('rect',{x:bx,y:bb-hh,width:28,height:hh,rx:3,fill:g.col,opacity:i===0?.55:1},svg);
+      S('text',{x:bx+14,y:bb-hh-6,'text-anchor':'middle',class:'svgs',fill:'var(--ink)',text:cols[i].lab},svg)});
+    S('text',{x:g.x+31,y:bb+22,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:g.t},svg)});
+  S('line',{x1:gx,x2:gx+gw,y1:bb,y2:bb,stroke:'var(--ink)'},svg);
+  S('text',{x:gx+gw/2,y:bb-bh-28,'text-anchor':'middle',class:'svgs',fill:'var(--muted)',text:'두 기둥 비교'},svg);
+  $('#v13A').textContent=nf(s13.A,1)+' m²';$('#v13h').textContent=nf(s13.h,1)+' km';
+  const same=Math.abs(cols[0].P-cols[1].P)<1e-6*cols[0].P;
+  $('#r13').innerHTML='<h3>계산 결과</h3><div class="tablewrap" style="margin-top:0"><table class="rec"><thead><tr><th></th><th>기둥 ①</th><th>기둥 ②</th></tr></thead><tbody>'+
+    '<tr><td>밑면적 A</td><td>1.0 m²</td><td>'+nf(s13.A,1)+' m²</td></tr>'+
+    '<tr><td>무게 F (N)</td><td>'+sci(cols[0].F)+'</td><td>'+sci(cols[1].F)+'</td></tr>'+
+    '<tr><td>압력 P (Pa)</td><td>'+sci(cols[0].P)+'</td><td>'+sci(cols[1].P)+'</td></tr></tbody></table></div>'+
+    '<p style="margin:10px 0 0">'+(s13.A===1?'<span class="note">기둥 ②의 밑면적을 넓혀 보세요.</span>':same?'<span class="badge ok">무게는 '+nf(s13.A,1)+'배인데 압력은 같아요</span>':'')+'</p>'+
+    '<p class="note" style="margin-top:6px">ρgh = '+nf(rho)+' × 9.8 × '+nf(hm)+' = '+sci(rho*G*hm)+' Pa</p>'}
+$('#b13').onclick=()=>{const c=$('#eq13');const on=!c.classList.contains('cancelled');c.classList.toggle('cancelled',on);$('#b13').textContent=on?'처음 식으로 되돌리기':'분자·분모의 A 약분하기';if(on)ladder(Math.max(3,maxSeen))};
+$('#c13A').oninput=e=>{s13.A=+e.target.value;draw13()};
+$('#c13h').oninput=e=>{s13.h=+e.target.value;draw13()};
+seg($('#c13m'),matItems(),()=>s13.mat,v=>{s13.mat=v;draw13()});
+hooks['pressure-3']=draw13;
+
+/* ======================================================
+   1-4 층이 쌓이면
+   ====================================================== */
+const PRE14={
+  ocean:{label:'해양 지각 기둥',L:[{mat:'water',h:4},{mat:'sed',h:1},{mat:'basalt',h:5},{mat:'mantle',h:40}]},
+  cont:{label:'대륙 지각 기둥',L:[{mat:'granite',h:35},{mat:'mantle',h:15}]},
+  one:{label:'화강암 한 층',L:[{mat:'granite',h:20}]}
+};
+const s14={pre:'ocean',layers:JSON.parse(JSON.stringify(PRE14.ocean.L)),probe:25,drag:false};
+function pAt(L,z){let p=0,zz=0;for(const l of L){const t=Math.min(l.h,Math.max(0,z-zz));p+=G*MAT[l.mat].rho*t;zz+=l.h;if(zz>=z)break}return p}
+function draw14(){
+  const svg=$('#svg14');svg.replaceChildren();
+  const L=s14.layers,tot=sumH(L),maxD=Math.max(10,Math.ceil(tot/10)*10);
+  const top=40,bot=410,y=z=>top+z/maxD*(bot-top);
+  const PT=G*sumRH(L),xmax=niceCeil(Math.max(PT,1)),gx0=250,gx1=612,x=p=>gx0+p/xmax*(gx1-gx0);
+  const cx0=78,cx1=182;
+  let z=0;L.forEach(l=>{const y0=y(z),y1=y(z+l.h),m=MAT[l.mat];
+    S('rect',{x:cx0,y:y0,width:cx1-cx0,height:Math.max(0,y1-y0),fill:m.fill},svg);
+    S('rect',{x:gx0,y:y0,width:gx1-gx0,height:Math.max(0,y1-y0),fill:m.fill,opacity:.16},svg);
+    const hh=y1-y0;
+    if(hh>=34){S('text',{x:(cx0+cx1)/2,y:(y0+y1)/2-2,'text-anchor':'middle',class:'svgl',fill:m.ink,text:m.name},svg);
+      S('text',{x:(cx0+cx1)/2,y:(y0+y1)/2+15,'text-anchor':'middle',class:'svgm',fill:m.ink,text:'ρ '+m.rho.toFixed(1)},svg)}
+    else if(hh>=15){S('text',{x:(cx0+cx1)/2,y:(y0+y1)/2+4.5,'text-anchor':'middle',class:'svgs',fill:m.ink,text:m.name},svg)}
+    else{S('text',{x:cx1+6,y:(y0+y1)/2+4,class:'svgs',fill:'var(--muted)',text:m.name},svg)}
+    z+=l.h});
+  S('rect',{x:cx0,y:top,width:cx1-cx0,height:y(tot)-top,fill:'none',stroke:'var(--edge)','stroke-width':1.2},svg);
+  const step=maxD<=60?10:20;
+  for(let d=0;d<=maxD;d+=step){S('line',{x1:cx0-8,x2:cx0,y1:y(d),y2:y(d),stroke:'var(--muted)'},svg);
+    S('text',{x:cx0-12,y:y(d)+4.5,'text-anchor':'end',class:'svgm',fill:'var(--muted)',text:String(d)},svg);
+    S('line',{x1:gx0,x2:gx1,y1:y(d),y2:y(d),stroke:'var(--line)'},svg)}
+  S('text',{x:cx0-12,y:22,'text-anchor':'end',class:'svgs',fill:'var(--muted)',text:'깊이(km)'},svg);
+  for(let i=0;i<=5;i++){const p=xmax*i/5;S('line',{x1:x(p),x2:x(p),y1:top,y2:bot,stroke:'var(--line)'},svg);
+    S('text',{x:x(p),y:top-8,'text-anchor':i===0?'start':i===5?'end':'middle',class:'svgm',fill:'var(--muted)',text:nf(p)},svg)}
+  S('text',{x:gx1,y:16,'text-anchor':'end',class:'svgs',fill:'var(--muted)',text:'압력 (MPa) →'},svg);
+  S('line',{x1:gx0,x2:gx0,y1:top,y2:bot,stroke:'var(--ink)'},svg);
+  const pts=[[x(0),y(0)]];let zz=0,pp=0;L.forEach(l=>{zz+=l.h;pp+=G*MAT[l.mat].rho*l.h;pts.push([x(pp),y(zz)])});
+  S('polyline',{points:pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' '),fill:'none',stroke:'var(--accent)','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+  pts.slice(1,-1).forEach(p=>S('circle',{cx:p[0],cy:p[1],r:3,fill:'var(--accent)'},svg));
+  /* 측정선 */
+  const pz=Math.min(s14.probe,tot),pP=pAt(L,pz),py=y(pz),px=x(pP);
+  S('line',{x1:cx0-8,x2:gx1,y1:py,y2:py,stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('circle',{cx:px,cy:py,r:7,fill:'var(--accent)',stroke:'var(--surface)','stroke-width':2.5},svg);
+  const lab=nf(pz,2)+' km · '+nf(pP,1)+' MPa';const lw=lab.length*7.9+16;
+  let lx=px+12,ly=py-30;if(lx+lw>gx1)lx=px-12-lw;if(ly<top)ly=py+10;
+  S('rect',{x:lx,y:ly,width:lw,height:22,rx:6,fill:'var(--ink)'},svg);
+  S('text',{x:lx+8,y:ly+15.5,class:'svgm',fill:'var(--bg)',text:lab},svg);
+  /* 슬라이더·표 */
+  const zr=$('#c14z');zr.max=String(tot);if(s14.probe>tot)s14.probe=tot;zr.value=String(s14.probe);$('#v14z').textContent=nf(pz,2)+' km';
+  const tb=$('#t14 tbody');tb.replaceChildren();
+  L.forEach(l=>{const m=MAT[l.mat];tb.append(H('tr',{},H('td',{},H('span',{class:'sw',style:'background:'+m.fill+';margin-right:6px;vertical-align:-1px'}),m.name),H('td',{},m.rho.toFixed(1)),H('td',{},nf(l.h,2)),H('td',{},nf(G*m.rho*l.h,1))))});
+  tb.append(H('tr',{class:'tot'},H('td',{},'합계 (맨 아래)'),H('td',{},''),H('td',{},nf(tot,2)),H('td',{},nf(PT,1))))}
+const ed14=layerEditor($('#ed14'),()=>s14.layers,()=>{s14.pre=null;markPre14();draw14()},'l14');
+function markPre14(){[...$('#c14p').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(Object.keys(PRE14)[i]===s14.pre)))}
+seg($('#c14p'),Object.keys(PRE14).map(k=>({value:k,label:PRE14[k].label})),()=>s14.pre,v=>{s14.pre=v;s14.layers=JSON.parse(JSON.stringify(PRE14[v].L));ed14.render();draw14()});
+$('#c14z').oninput=e=>{s14.probe=+e.target.value;draw14()};
+(function(){const svg=$('#svg14');
+  function setP(e){const p=svgPoint(svg,e);const tot=sumH(s14.layers),maxD=Math.max(10,Math.ceil(tot/10)*10);
+    s14.probe=Math.max(0,Math.min(tot,Math.round(((p.y-40)/(410-40)*maxD)*4)/4));draw14()}
+  svg.addEventListener('pointerdown',e=>{s14.drag=true;try{svg.setPointerCapture(e.pointerId)}catch(_){}setP(e)});
+  svg.addEventListener('pointermove',e=>{if(s14.drag)setP(e)});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(t=>svg.addEventListener(t,()=>{s14.drag=false}))})();
+hooks['pressure-4']=draw14;
+
+/* ======================================================
+   1-5 압력 평형
+   ====================================================== */
+const PRE15={
+  mission:{label:'미션: 현무암 vs 화강암',A:[{mat:'basalt',h:9}],B:[{mat:'granite',h:5}]},
+  same:{label:'같은 높이, 다른 암석',A:[{mat:'granite',h:10},{mat:'mantle',h:20}],B:[{mat:'basalt',h:10},{mat:'mantle',h:20}]},
+  book:{label:'교과서 그림 수치',A:[{mat:'granite',h:35},{mat:'mantle',h:15}],B:[{mat:'water',h:4},{mat:'sed',h:1},{mat:'basalt',h:5},{mat:'mantle',h:40}]}
+};
+const s15={pre:'mission',A:JSON.parse(JSON.stringify(PRE15.mission.A)),B:JSON.parse(JSON.stringify(PRE15.mission.B)),busy:false};
+function expr(L){return L.map(l=>MAT[l.mat].rho.toFixed(1)+'×'+nf(l.h,2)).join(' + ')}
+function draw15(){
+  const svg=$('#svg15');svg.replaceChildren();
+  const A=s15.A,B=s15.B,PA=sumRH(A),PB=sumRH(B),tA=sumH(A),tB=sumH(B);
+  const base=388,maxT=Math.max(tA,tB,10),k=310/maxT,w=130;
+  const eq=Math.abs(PA-PB)<0.005;
+  /* 아래 맨틀 */
+  S('rect',{x:30,y:base,width:580,height:44,fill:'var(--m-mantle)',opacity:.35},svg);
+  S('text',{x:40,y:base+38,class:'svgs',fill:'var(--ink)',text:'맨틀'},svg);
+  const cols=[{L:A,x:150,name:'기둥 A',P:PA},{L:B,x:360,name:'기둥 B',P:PB}];
+  cols.forEach(c=>{let yb=base;for(let i=c.L.length-1;i>=0;i--){const l=c.L[i],m=MAT[l.mat],hh=l.h*k;
+      S('rect',{x:c.x,y:yb-hh,width:w,height:hh,fill:m.fill},svg);
+      if(hh>=32){S('text',{x:c.x+w/2,y:yb-hh/2-2,'text-anchor':'middle',class:'svgl',fill:m.ink,text:m.name+' '+nf(l.h,2)+' km'},svg);
+        S('text',{x:c.x+w/2,y:yb-hh/2+15,'text-anchor':'middle',class:'svgm',fill:m.ink,text:'ρ '+m.rho.toFixed(1)},svg)}
+      else if(hh>=15){S('text',{x:c.x+w/2,y:yb-hh/2+4.5,'text-anchor':'middle',class:'svgs',fill:m.ink,text:m.name+' '+nf(l.h,2)},svg)}
+      yb-=hh}
+    c.top=yb;S('rect',{x:c.x,y:c.top,width:w,height:base-c.top,fill:'none',stroke:'var(--edge)','stroke-width':1.2},svg);
+    S('text',{x:c.x+w/2,y:c.top-30,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:c.name},svg);
+    S('text',{x:c.x+w/2,y:c.top-11,'text-anchor':'middle',class:'svgm',fill:'var(--muted)',text:'Σρh = '+nf(c.P,2)},svg)});
+  S('line',{x1:30,x2:610,y1:base,y2:base,stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'9 5'},svg);
+  S('text',{x:40,y:base-8,class:'svgs',fill:'var(--ink)',text:'보상 깊이'},svg);
+  /* 압력 막대 (보상 깊이) */
+  const pm=Math.max(PA,PB,1);
+  cols.forEach(c=>{const bw=(c.P/pm)*w;S('rect',{x:c.x,y:base+8,width:bw,height:10,rx:3,fill:eq?'var(--good)':(c.P===pm?'var(--warn)':'var(--accent)')},svg)});
+  if(eq){S('rect',{x:282,y:base-40,width:76,height:30,rx:15,fill:'var(--good)'},svg);
+    S('text',{x:320,y:base-20,'text-anchor':'middle',class:'svgt',fill:'var(--surface)',text:'평형!'},svg)}
+  else{const hi=PA>PB?cols[0]:cols[1],lo=PA>PB?cols[1]:cols[0];
+    arrow(svg,hi.x+w/2,base+30,lo.x+w/2+(lo.x>hi.x?-8:8),base+30,'var(--warn)',3);
+    S('text',{x:hi.x+w/2,y:hi.top-50,'text-anchor':'middle',class:'svgl',fill:'var(--warn)',text:'↓ 가라앉아요'},svg);
+    S('text',{x:lo.x+w/2,y:lo.top-50,'text-anchor':'middle',class:'svgl',fill:'var(--accent)',text:'↑ 떠올라요'},svg);
+    S('text',{x:320,y:base+62,'text-anchor':'middle',class:'svgs',fill:'var(--warn)',text:'압력이 높은 쪽 아래에서 낮은 쪽으로 맨틀이 밀려나요'},svg)}
+  /* 계산 패널 */
+  const diff=PA-PB;
+  $('#r15').innerHTML='<h3>보상 깊이에서의 압력 비교</h3>'+
+    '<div class="calc"><div class="row"><span>기둥 A</span><span>'+expr(A)+' = <b>'+nf(PA,2)+'</b></span></div>'+
+    '<div class="row"><span>기둥 B</span><span>'+expr(B)+' = <b>'+nf(PB,2)+'</b></span></div>'+
+    '<div class="row"><span>압력 (×9.8)</span><span>A '+nf(PA*G,1)+' MPa · B '+nf(PB*G,1)+' MPa</span></div></div>'+
+    '<p style="margin:8px 0 0">'+(eq?'<span class="badge ok">평형이에요 · 같은 깊이에서 압력이 같아요</span>':'<span class="badge no">차이 '+nf(Math.abs(diff),2)+' (약 '+nf(Math.abs(diff)/Math.max(PA,PB)*100,1)+'%) · '+(diff>0?'A':'B')+'가 더 무거워요</span>')+'</p>'+
+    (s15.pre==='book'&&!eq?'<p class="note" style="margin-top:6px">교과서 그림의 수치는 개략적이라서 그대로 넣으면 정확히 같지 않아요. ‘평형 찾기’로 얼마나 움직여야 하는지 확인해 보세요.</p>':'')}
+const clr15=()=>{const m=$('#m15');m.textContent='';m.classList.remove('ok')};
+const ed15a=layerEditor($('#ed15a'),()=>s15.A,()=>{s15.pre=null;markPre15();clr15();draw15()},'l15a');
+const ed15b=layerEditor($('#ed15b'),()=>s15.B,()=>{s15.pre=null;markPre15();clr15();draw15()},'l15b');
+function markPre15(){[...$('#c15p').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(Object.keys(PRE15)[i]===s15.pre)))}
+seg($('#c15p'),Object.keys(PRE15).map(k=>({value:k,label:PRE15[k].label})),()=>s15.pre,v=>{s15.pre=v;s15.A=JSON.parse(JSON.stringify(PRE15[v].A));s15.B=JSON.parse(JSON.stringify(PRE15[v].B));ed15a.render();ed15b.render();$('#m15').textContent='';draw15()});
+$('#b15').onclick=()=>{if(s15.busy)return;const A=s15.A,B=s15.B,la=A[A.length-1],lb=B[B.length-1];const msg=$('#m15');
+  if(la.mat!=='mantle'||lb.mat!=='mantle'){msg.classList.remove('ok');msg.textContent='기둥이 가라앉거나 떠오르려면 두 기둥 모두 맨 아래 층이 맨틀이어야 해요. ‘같은 높이, 다른 암석’이나 ‘교과서 그림 수치’로 해 보세요.';return}
+  const PA=sumRH(A),PB=sumRH(B);if(Math.abs(PA-PB)<0.005){msg.textContent='이미 평형이에요.';return}
+  const d=(PA-PB)/(2*MAT.mantle.rho);const a0=la.h,b0=lb.h,a1=a0-d,b1=b0+d;
+  if(a1<0.25||b1<0.25){msg.textContent='맨틀 층이 너무 얇아서 더 움직일 수 없어요. 맨 아래 맨틀 층을 더 두껍게 해 보세요.';return}
+  msg.textContent='';msg.classList.remove('ok');s15.busy=true;
+  tween(1400,e=>{la.h=a0+(a1-a0)*e;lb.h=b0+(b1-b0)*e;draw15()},()=>{la.h=a1;lb.h=b1;s15.busy=false;ed15a.render();ed15b.render();draw15();
+    msg.classList.add('ok');msg.textContent='맨틀이 '+nf(Math.abs(d),2)+' km만큼 이동했어요. 기둥 '+(d>0?'A':'B')+'는 '+nf(Math.abs(d),2)+' km 가라앉고, 기둥 '+(d>0?'B':'A')+'는 같은 만큼 떠올랐어요.'})};
+hooks['pressure-5']=draw15;
+
+/* ======================================================
+   TAB 2 프래트설
+   ====================================================== */
+const row=(a,b)=>'<div class="row"><span>'+a+'</span><span>'+b+'</span></div>';
+const D2=50,RHO0=2.8;
+const PRE2={book:{label:'교과서 그림처럼',H:[-4,-4,0.5,4,0.5,-4,-4]},cont:{label:'완만한 대륙',H:[-4,-1,0.5,1.5,2.5,0.5,-2]},big:{label:'깊은 바다와 높은 산',H:[-5,-3,1,6,3,-1,-5]}};
+const s2={H:PRE2.book.H.slice(),sel:3,pre:'book',moho:false,drag:false,y0:0,h0:0};
+const prattRho=h=>h>=0?RHO0*D2/(D2+h):(RHO0*D2-MAT.water.rho*(-h))/(D2+h);
+const prattSum=h=>h>=0?prattRho(h)*(D2+h):(-h)*MAT.water.rho+prattRho(h)*(D2+h);
+const landName=h=>h<-0.05?'바다':h<1?'평야':h<3?'고원':'산맥';
+const elevShort=h=>h<-0.05?'−'+nf(-h,1)+' km':'+'+nf(Math.max(0,h),1)+' km';
+const elevLong=h=>h<-0.05?'수심 '+nf(-h,1)+' km':'해발 '+nf(Math.max(0,h),1)+' km';
+function dens(rho,lo,hi){const t=Math.max(0,Math.min(1,(rho-lo)/(hi-lo)));return {t,fill:'color-mix(in oklab, var(--m-basalt) '+Math.round(t*100)+'%, var(--m-granite))',ink:t<.5?'var(--m-granite-ink)':'var(--m-basalt-ink)'}}
+function realMoho(h){if(h>=0)return 33+3*h;const d=-h;return Math.max(d+6,33-9*d)}
+const P2={x0:62,bw:72,k:6.2,top:66,up:6};
+const y2=z=>P2.top+P2.up*P2.k+z*P2.k;
+function draw2(){
+  const svg=$('#svg2');svg.replaceChildren();
+  const {x0,bw}=P2,n=s2.H.length,xe=x0+n*bw,yS=y2(0),yD=y2(D2);
+  S('rect',{x:x0,y:yD,width:n*bw,height:40,fill:MAT.mantle.fill},svg);
+  S('text',{x:x0+10,y:yD+25,class:'svgl',fill:MAT.mantle.ink,text:'맨틀 (ρ 3.3)'},svg);
+  for(let d=0;d<=50;d+=10){S('line',{x1:x0-8,x2:x0,y1:y2(d),y2:y2(d),stroke:'var(--muted)'},svg);
+    S('text',{x:x0-12,y:y2(d)+4.5,'text-anchor':'end',class:'svgm',fill:'var(--muted)',text:String(d)},svg)}
+  S('text',{x:x0-12,y:yD+26,'text-anchor':'end',class:'svgs',fill:'var(--muted)',text:'km'},svg);
+  s2.H.forEach((h,i)=>{const xb=x0+i*bw,rho=prattRho(h),c=dens(rho,2.5,3.0),yt=y2(-h),top=Math.min(yt,yS);
+    if(h<0)S('rect',{x:xb,y:yS,width:bw,height:yt-yS,fill:MAT.water.fill},svg);
+    S('rect',{x:xb,y:yt,width:bw,height:yD-yt,fill:c.fill},svg);
+    if(i>0)S('line',{x1:xb,x2:xb,y1:top,y2:yD,stroke:'var(--surface)','stroke-width':1.5},svg);
+    S('text',{x:xb+bw/2,y:(yt+yD)/2+5,'text-anchor':'middle',class:'svgt',fill:c.ink,text:rho.toFixed(2)},svg);
+    S('text',{x:xb+bw/2,y:yD-10,'text-anchor':'middle',class:'svgm',fill:c.ink,text:'Σ '+prattSum(h).toFixed(1)},svg);
+    S('text',{x:xb+bw/2,y:top-24,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:landName(h)},svg);
+    S('text',{x:xb+bw/2,y:top-8,'text-anchor':'middle',class:'svgm',fill:'var(--muted)',text:elevShort(h)},svg)});
+  S('line',{x1:x0,x2:xe+4,y1:yS,y2:yS,stroke:'var(--m-water)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('text',{x:xe+8,y:yS+4.5,class:'svgs',fill:'var(--muted)',text:'해수면'},svg);
+  S('line',{x1:x0,x2:xe+4,y1:yD,y2:yD,stroke:'var(--ink)','stroke-width':2.5},svg);
+  S('text',{x:xe+8,y:yD-6,class:'svgl',fill:'var(--ink)',text:'모호면'},svg);
+  S('text',{x:xe+8,y:yD+11,class:'svgs',fill:'var(--muted)',text:'(편평)'},svg);
+  if(s2.moho){let d='';s2.H.forEach((h,i)=>{const yy=y2(realMoho(h)),xb=x0+i*bw;d+=(i?'L':'M')+xb+','+yy.toFixed(1)+' L'+(xb+bw)+','+yy.toFixed(1)+' '});
+    S('path',{d,fill:'none',stroke:'var(--accent)','stroke-width':3,'stroke-dasharray':'8 5'},svg);
+    const yl=y2(realMoho(s2.H[n-1]));S('text',{x:xe+8,y:yl-4,class:'svgl',fill:'var(--accent)',text:'실제'},svg);S('text',{x:xe+8,y:yl+12,class:'svgs',fill:'var(--accent)',text:'(대략)'},svg)}
+  const i=s2.sel,h=s2.H[i],xb=x0+i*bw,top=Math.min(y2(-h),yS);
+  S('rect',{x:xb+1.5,y:top+1.5,width:bw-3,height:yD-top-3,fill:'none',stroke:'var(--accent)','stroke-width':3,rx:2},svg)}
+function side2(){const i=s2.sel,h=s2.H[i],rho=prattRho(h);
+  $('#h2sel').textContent='선택한 기둥: '+(i+1)+'번 · '+landName(h);
+  $('#c2h').value=String(h);$('#v2h').textContent=elevLong(h);
+  $('#r2').innerHTML=h>=0?
+    row('평형 조건','ρ × (D + h) = ρ₀ × D')+row('밀도','2.8 × 50 ÷ (50 + '+nf(h,1)+') = <b class="big">'+rho.toFixed(2)+'</b> g/cm³'):
+    row('평형 조건','1.0 × d + ρ × (D − d) = ρ₀ × D')+row('밀도','(140 − 1.0 × '+nf(-h,1)+') ÷ (50 − '+nf(-h,1)+') = <b class="big">'+rho.toFixed(2)+'</b> g/cm³');
+  const ok=s2.H.every(v=>Math.abs(prattSum(v)-140)<1e-6);
+  $('#r2chk').innerHTML='<h3>50 km 깊이(지각 바닥)에서의 압력</h3><p style="margin:0 0 6px">'+(ok?'<span class="badge ok">7개 기둥 모두 ρh 합 = 140.0 → 평형</span>':'')+'</p><p class="note">140 × 9.8 ≈ 1,372 MPa. 높이와 밀도가 서로 맞춰져서 모든 기둥의 압력이 같아요.</p>'}
+function markPre2(){[...$('#c2p').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(Object.keys(PRE2)[i]===s2.pre)))}
+seg($('#c2p'),Object.keys(PRE2).map(k=>({value:k,label:PRE2[k].label})),()=>s2.pre,v=>{s2.pre=v;s2.H=PRE2[v].H.slice();draw2();side2()});
+$('#c2h').oninput=e=>{s2.H[s2.sel]=+e.target.value;s2.pre=null;markPre2();draw2();side2()};
+$('#b2moho').onclick=()=>{s2.moho=!s2.moho;$('#b2moho').setAttribute('aria-pressed',String(s2.moho));$('#b2moho').textContent=s2.moho?'실제 모호면 숨기기':'실제 모호면(대략) 겹쳐 보기';draw2()};
+function dragProfile(svg,st,geo,yf,lim,redraw){
+  svg.addEventListener('pointerdown',e=>{const p=svgPoint(svg,e);const i=Math.floor((p.x-geo.x0)/geo.bw);if(i<0||i>=st.H.length)return;
+    st.sel=i;st.drag=true;st.y0=p.y;st.h0=st.H[i];try{svg.setPointerCapture(e.pointerId)}catch(_){}redraw()});
+  svg.addEventListener('pointermove',e=>{if(!st.drag)return;const p=svgPoint(svg,e);
+    const h=Math.max(lim[0],Math.min(lim[1],Math.round((st.h0-(p.y-st.y0)/geo.k)*10)/10));
+    if(h!==st.H[st.sel]){st.H[st.sel]=h;st.pre=null;redraw(true)}});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(t=>svg.addEventListener(t,()=>{st.drag=false}))}
+dragProfile($('#svg2'),s2,P2,y2,[-5,6],(chg)=>{if(chg)markPre2();draw2();side2()});
+hooks['pratt']=()=>{draw2();side2()};
+
+/* ======================================================
+   TAB 3-1 나무 도막 실험
+   ====================================================== */
+const RW=0.6,RI=0.9;
+const s31={T:[4,6,8,10],I:[0,0,0,0],sel:3,busy:false};
+const sub31=i=>Math.min(s31.T[i],RW*s31.T[i]+RI*s31.I[i]);
+const imax31=i=>Math.floor((1-RW)*s31.T[i]/RI*10)/10;
+const CX31=[118,248,378,508];
+function draw31(){
+  const svg=$('#svg31');svg.replaceChildren();
+  const k=12,yW=176,tx0=40,tx1=600,ty0=70,ty1=388,bw=84;
+  S('rect',{x:tx0,y:yW,width:tx1-tx0,height:ty1-yW,fill:'var(--tank)'},svg);
+  const geo=s31.T.map((T,i)=>{const s=sub31(i);return {T,s,I:s31.I[i],cx:CX31[i],yt:yW-(T-s)*k,yb:yW+s*k}});
+  geo.forEach((g,i)=>{
+    S('rect',{x:g.cx-bw/2,y:g.yt,width:bw,height:g.yb-g.yt,rx:3,fill:'var(--m-wood)'},svg);
+    for(let gy=g.yt+7,j=0;gy<g.yb-3;gy+=9,j++)S('line',{x1:g.cx-bw/2+6,x2:g.cx+bw/2-6,y1:gy,y2:gy+(j%3)-1,stroke:'var(--shade-lo)','stroke-width':1.2},svg);
+    if(g.I>0.001){const ih=g.I*k;S('rect',{x:g.cx-30,y:g.yt-ih,width:60,height:ih,rx:4,fill:'var(--m-ice)',stroke:'var(--edge)','stroke-width':1},svg);
+      if(ih>=15)S('text',{x:g.cx,y:g.yt-ih/2+4.5,'text-anchor':'middle',class:'svgs',fill:'var(--m-ice-ink)',text:'얼음'},svg)}});
+  S('rect',{x:tx0,y:yW,width:tx1-tx0,height:ty1-yW,fill:'var(--tank)'},svg);
+  S('line',{x1:tx0,x2:tx1,y1:yW,y2:yW,stroke:'var(--m-water)','stroke-width':2.5},svg);
+  S('path',{d:'M'+tx0+','+ty0+' L'+tx0+','+ty1+' L'+tx1+','+ty1+' L'+tx1+','+ty0,fill:'none',stroke:'var(--edge)','stroke-width':3,'stroke-linejoin':'round'},svg);
+  geo.forEach((g,i)=>{const dx=g.cx+bw/2+7;
+    if(i===s31.sel){const ih=g.I>0.001?g.I*k:0;S('rect',{x:g.cx-bw/2-4,y:g.yt-ih-4,width:bw+8,height:g.yb-g.yt+ih+8,rx:6,fill:'none',stroke:'var(--accent)','stroke-width':2.5},svg)}
+    S('text',{x:dx,y:(g.yt+yW)/2+4.5,class:'svgm',fill:'var(--ink)',text:(g.T-g.s).toFixed(1)},svg);
+    S('text',{x:dx,y:(yW+g.yb)/2+4.5,class:'svgm',fill:'var(--m-water-ink)',text:g.s.toFixed(1)},svg);
+    S('text',{x:g.cx,y:ty1+22,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:'도막 '+(i+1)+' · '+nf(g.T,1)+' cm'},svg)});
+  S('text',{x:tx0+12,y:ty1-14,class:'svgs',fill:'var(--m-water-ink)',text:'물 (ρ 1.0)'},svg);
+  S('text',{x:tx0,y:36,class:'svgs',fill:'var(--muted)',text:'얼음이 없으면 모든 도막이 물 위 40% · 물속 60%'},svg)}
+function side31(){const i=s31.sel;$('#h31').textContent='도막 '+(i+1);
+  const tr=$('#c31T');tr.value=String(s31.T[i]);$('#v31T').textContent=nf(s31.T[i],1)+' cm';
+  const ir=$('#c31I');ir.max=String(imax31(i));ir.value=String(s31.I[i]);$('#v31I').textContent=nf(s31.I[i],1)+' cm';
+  const tb=$('#t31 tbody');tb.replaceChildren();
+  s31.T.forEach((T,j)=>{const s=sub31(j);tb.append(H('tr',{class:j===i?'new':null},H('td',{},'도막 '+(j+1)),H('td',{},nf(T,1)),H('td',{},nf(s31.I[j],1)),H('td',{},(T-s).toFixed(1)),H('td',{},s.toFixed(1))))})}
+function upd31(){draw31();side31()}
+seg($('#c31s'),[0,1,2,3].map(v=>({value:v,label:'도막 '+(v+1)})),()=>s31.sel,v=>{s31.sel=v;upd31()});
+function markSel31(){[...$('#c31s').children].forEach((b,j)=>b.setAttribute('aria-pressed',String(j===s31.sel)))}
+$('#c31T').oninput=e=>{const i=s31.sel;s31.T[i]=+e.target.value;s31.I[i]=Math.min(s31.I[i],imax31(i));upd31()};
+$('#c31I').oninput=e=>{s31.I[s31.sel]=+e.target.value;upd31()};
+$('#b31on').onclick=()=>{if(s31.busy)return;const i=s31.sel,a=s31.I[i],b=Math.round(imax31(i)*0.75*10)/10;if(b<=a)return;s31.busy=true;
+  tween(900,e=>{s31.I[i]=a+(b-a)*e;upd31()},()=>{s31.I[i]=b;s31.busy=false;upd31()})};
+$('#b31melt').onclick=()=>{if(s31.busy)return;const i=s31.sel,a=s31.I[i];if(a<=0)return;s31.busy=true;
+  tween(2600,e=>{s31.I[i]=a*(1-e);upd31()},()=>{s31.I[i]=0;s31.busy=false;upd31()})};
+(function(){const svg=$('#svg31');svg.addEventListener('click',e=>{const p=svgPoint(svg,e);let best=-1,bd=1e9;CX31.forEach((cx,i)=>{const d=Math.abs(p.x-cx);if(d<bd){bd=d;best=i}});
+  if(bd<60){s31.sel=best;markSel31();upd31()}})})();
+hooks['airy-1']=upd31;
+
+/* ======================================================
+   TAB 3-2 지각의 뿌리
+   ====================================================== */
+const RC=2.7,RM=3.3,T0=30,D3=50;
+const PRE32={book:{label:'교과서 그림처럼',H:[-4,-4,0.5,4,0.5,-4,-4]},cont:{label:'완만한 대륙',H:[-4,-1,0.5,1.5,2.5,0.5,-2]},big:{label:'깊은 바다와 높은 산',H:[-5,-3,1,4,3,-1,-5]}};
+const s32={H:PRE32.book.H.slice(),sel:3,pre:'book',drag:false,y0:0,h0:0};
+function airy(h){if(h>=0){const r=h*RC/(RM-RC);return {top:-h,moho:T0+r,r}}const d=-h,r=d*(RC-MAT.water.rho)/(RM-RC);return {top:d,moho:T0-r,r:-r}}
+function airySum(h){const a=airy(h);return h>=0?RC*(h+a.moho)+RM*(D3-a.moho):(-h)*MAT.water.rho+RC*(a.moho+h)+RM*(D3-a.moho)}
+const P3={x0:62,bw:72,k:6.2,top:66,up:4.5};
+const y3=z=>P3.top+P3.up*P3.k+z*P3.k;
+function draw32(){
+  const svg=$('#svg32');svg.replaceChildren();
+  const {x0,bw}=P3,n=s32.H.length,xe=x0+n*bw,yS=y3(0),yD=y3(D3);
+  S('rect',{x:x0,y:yS,width:n*bw,height:yD+40-yS,fill:MAT.mantle.fill},svg);
+  let mpath='';
+  s32.H.forEach((h,i)=>{const xb=x0+i*bw,a=airy(h),yt=y3(a.top),yb=y3(a.moho),top=Math.min(yt,yS);
+    if(h<0)S('rect',{x:xb,y:yS,width:bw,height:yt-yS,fill:MAT.water.fill},svg);
+    S('rect',{x:xb,y:yt,width:bw,height:yb-yt,fill:MAT.granite.fill},svg);
+    if(i>0)S('line',{x1:xb,x2:xb,y1:top,y2:Math.max(yb,y3(airy(s32.H[i-1]).moho)),stroke:'var(--surface)','stroke-width':1.2,opacity:.7},svg);
+    if(yb-yt>=40)S('text',{x:xb+bw/2,y:(yt+yb)/2+5,'text-anchor':'middle',class:'svgm',fill:MAT.granite.ink,text:'ρ 2.7'},svg);
+    S('text',{x:xb+bw/2,y:(yb+18>yD-4?yb-8:yb+18),'text-anchor':'middle',class:'svgm',fill:(yb+18>yD-4?MAT.granite.ink:MAT.mantle.ink),text:nf(a.moho,1)},svg);
+    S('text',{x:xb+bw/2,y:yD+26,'text-anchor':'middle',class:'svgm',fill:MAT.mantle.ink,text:'Σ '+airySum(h).toFixed(1)},svg);
+    S('text',{x:xb+bw/2,y:top-24,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:landName(h)},svg);
+    S('text',{x:xb+bw/2,y:top-8,'text-anchor':'middle',class:'svgm',fill:'var(--muted)',text:elevShort(h)},svg);
+    mpath+=(i?'L':'M')+xb+','+yb.toFixed(1)+' L'+(xb+bw)+','+yb.toFixed(1)+' '});
+  S('path',{d:mpath,fill:'none',stroke:'var(--ink)','stroke-width':2.5},svg);
+  /* 선택한 기둥 강조: 뿌리(또는 솟은 맨틀) 부분 */
+  const i=s32.sel,h=s32.H[i],a=airy(h),xb=x0+i*bw,yt=Math.min(y3(a.top),yS);
+  if(Math.abs(a.r)>0.05){const ya=y3(T0),yb=y3(a.moho);S('rect',{x:xb+3,y:Math.min(ya,yb),width:bw-6,height:Math.abs(yb-ya),fill:'var(--accent)',opacity:.35},svg);
+    if(Math.abs(yb-ya)>=17)S('text',{x:xb+bw/2,y:(ya+yb)/2+5,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:(a.r>0?'뿌리 ':'↑ ')+nf(Math.abs(a.r),1)},svg)}
+  S('rect',{x:xb+1.5,y:yt+1.5,width:bw-3,height:Math.max(y3(a.moho),y3(T0))-yt-3+(a.r<0?0:0),fill:'none',stroke:'var(--accent)','stroke-width':3,rx:2},svg);
+  S('line',{x1:x0,x2:xe+4,y1:yS,y2:yS,stroke:'var(--m-water)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('text',{x:xe+8,y:yS+4.5,class:'svgs',fill:'var(--muted)',text:'해수면'},svg);
+  S('line',{x1:x0,x2:xe+4,y1:y3(T0),y2:y3(T0),stroke:'var(--ink)','stroke-width':1.2,'stroke-dasharray':'3 4',opacity:.7},svg);
+  S('text',{x:xe+8,y:y3(T0)-4,class:'svgs',fill:'var(--muted)',text:'기준'},svg);S('text',{x:xe+8,y:y3(T0)+12,class:'svgs',fill:'var(--muted)',text:'30 km'},svg);
+  S('line',{x1:x0,x2:xe+4,y1:yD,y2:yD,stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'9 5'},svg);
+  S('text',{x:xe+8,y:yD-4,class:'svgs',fill:'var(--ink)',text:'보상'},svg);S('text',{x:xe+8,y:yD+12,class:'svgs',fill:'var(--ink)',text:'50 km'},svg);
+  for(let d=0;d<=50;d+=10){S('line',{x1:x0-8,x2:x0,y1:y3(d),y2:y3(d),stroke:'var(--muted)'},svg);
+    S('text',{x:x0-12,y:y3(d)+4.5,'text-anchor':'end',class:'svgm',fill:'var(--muted)',text:String(d)},svg)}
+  S('text',{x:x0-12,y:yD+26,'text-anchor':'end',class:'svgs',fill:'var(--muted)',text:'km'},svg)}
+function side32(){const i=s32.sel,h=s32.H[i],a=airy(h);
+  $('#h32sel').textContent='선택한 기둥: '+(i+1)+'번 · '+landName(h);
+  $('#c32h').value=String(h);$('#v32h').textContent=elevLong(h);
+  $('#r32').innerHTML=(h>=0?
+    row('뿌리 r','h × ρc ÷ (ρm − ρc) = '+nf(h,1)+' × 2.7 ÷ 0.6 = <b class="big">'+nf(a.r,1)+' km</b>'):
+    row('솟은 맨틀','d × (ρc − ρw) ÷ (ρm − ρc) = '+nf(-h,1)+' × 1.7 ÷ 0.6 = <b class="big">'+nf(-a.r,1)+' km</b>'))+
+    row('모호면 깊이','30 '+(h>=0?'+ ':'− ')+nf(Math.abs(a.r),1)+' = <b>'+nf(a.moho,1)+' km</b>')+
+    row('지각 두께','<b>'+nf(h>=0?h+a.moho:a.moho+h,1)+' km</b>'+(h>=0?' (해발 높이 포함)':' (수심 제외)'));
+  const ok=s32.H.every(v=>Math.abs(airySum(v)-147)<1e-6);
+  $('#r32chk').innerHTML='<h3>50 km 깊이에서의 압력</h3><p style="margin:0 0 6px">'+(ok?'<span class="badge ok">7개 기둥 모두 ρh 합 = 147.0 → 평형</span>':'')+'</p><p class="note">산 높이 1 km마다 뿌리가 4.5 km씩 내려가요. 지각의 밀도가 모두 같으니, 높이 솟은 만큼 깊이 잠겨야 압력이 같아져요.</p>'}
+function markPre32(){[...$('#c32p').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(Object.keys(PRE32)[i]===s32.pre)))}
+seg($('#c32p'),Object.keys(PRE32).map(k=>({value:k,label:PRE32[k].label})),()=>s32.pre,v=>{s32.pre=v;s32.H=PRE32[v].H.slice();draw32();side32()});
+$('#c32h').oninput=e=>{s32.H[s32.sel]=+e.target.value;s32.pre=null;markPre32();draw32();side32()};
+dragProfile($('#svg32'),s32,P3,y3,[-5,4],(chg)=>{if(chg)markPre32();draw32();side32()});
+hooks['airy-2']=()=>{draw32();side32()};
+
+/* ======================================================
+   TAB 3-3 조륙 운동
+   ====================================================== */
+const TAU=5250;
+const SC33={ice:{label:'빙하가 녹으면 (융기)'},ero:{label:'침식되면 (융기)'},sed:{label:'퇴적되면 (침강)'}};
+const s33={sc:'ice'};
+const ice33={I:1.3,shown:0,disp:0,s0:0,t:0,trace:[],phase:'idle',busy:false,raf:0};
+const ero33={h0:4.5,h:4.5,Th:0,slab:0,slabA:0,E:0,busy:false};ero33.Th=5.5*ero33.h0+T0;
+const sed33={S:0,b:0,grow:0,busy:false};
+const K33=8.4,TOP33=60,yS33=TOP33+5*K33;
+const y33=z=>yS33+z*K33;
+function drawIce(){
+  const svg=$('#svg33');svg.replaceChildren();
+  const y0=190,TH=200,EX=110,xL=30,xR=610,c0=180,c1=460,ramp=60,dd=ice33.disp*EX;
+  S('rect',{x:xL,y:y0+TH-40,width:xR-xL,height:530-(y0+TH-40),fill:MAT.mantle.fill},svg);
+  const off=x=>{if(x<=c0-ramp||x>=c1+ramp)return 0;if(x>=c0&&x<=c1)return 1;const t=x<c0?(x-(c0-ramp))/ramp:((c1+ramp)-x)/ramp;return (1-Math.cos(Math.PI*t))/2};
+  const xs=[];for(let x=xL;x<=xR;x+=10)xs.push(x);
+  const topP=xs.map(x=>[x,y0+off(x)*dd]),botP=xs.map(x=>[x,y0+TH+off(x)*dd]).reverse();
+  S('polygon',{points:topP.concat(botP).map(p=>p[0]+','+p[1].toFixed(1)).join(' '),fill:MAT.granite.fill,stroke:'var(--edge)','stroke-width':1.2},svg);
+  if(dd>1.5){[y0,y0+TH].forEach(yy=>S('line',{x1:c0-ramp,x2:c1+ramp,y1:yy,y2:yy,stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'6 4',opacity:.75},svg));
+    arrow(svg,c1-24,y0,c1-24,y0+dd,'var(--warn)',2.5);
+    S('text',{x:c1-32,y:Math.min(y0-10,y0+dd/2+5),'text-anchor':'end',class:'svgl',fill:'var(--ink)',text:(ice33.phase==='rebound'||ice33.phase==='done'?'아직 ':'침강 ')+nf(ice33.disp*1000,0)+' m'},svg)}
+  if(ice33.shown>0.001){const ih=ice33.shown*44,a=c0-20,b=c1+20,pts=[];
+    for(let x=a;x<=b;x+=6){const u=(x-a)/(b-a);pts.push([x,y0+off(x)*dd-ih*Math.sqrt(Math.max(0,1-Math.pow(2*u-1,2)))])}
+    for(let x=b;x>=a;x-=6)pts.push([x,y0+off(x)*dd]);
+    S('polygon',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'var(--m-ice)',stroke:'var(--edge)','stroke-width':1},svg);
+    if(ih>=20)S('text',{x:(c0+c1)/2,y:y0+dd-ih/2+5,'text-anchor':'middle',class:'svgl',fill:'var(--m-ice-ink)',text:'빙하 '+nf(ice33.shown,1)+' km (ρ 0.9)'},svg)}
+  S('text',{x:xL+14,y:y0+TH/2+5,class:'svgl',fill:MAT.granite.ink,text:'지각 (ρ 2.7)'},svg);
+  S('text',{x:xL+14,y:y0+TH+60,class:'svgl',fill:MAT.mantle.ink,text:'맨틀 (ρ 3.3)'},svg);
+  const msg=ice33.phase==='idle'?'빙하가 없는 처음 상태':ice33.phase==='covered'?'빙하의 무게로 지각이 가라앉았어요':ice33.phase==='melting'?'빙하가 녹고 있어요':'빙하가 녹은 뒤 '+nf(Math.round(ice33.t/100)*100)+'년';
+  S('text',{x:xL,y:44,class:'svgt',fill:'var(--ink)',text:msg},svg);
+  if(ice33.phase==='rebound'||ice33.phase==='done')S('text',{x:xL,y:66,class:'svgm',fill:'var(--accent)',text:'지금까지 융기 '+nf((ice33.s0-ice33.disp)*1000,0)+' m'},svg)}
+function sideIce(){
+  const s0=ice33.I*RICE/RM,up=(ice33.s0-ice33.disp)*1000,rate=ice33.phase==='rebound'||ice33.phase==='done'?ice33.s0*1e5/TAU*Math.exp(-ice33.t/TAU):0;
+  $('#v33I').textContent=nf(ice33.I,1)+' km';
+  let chart='';const W=420,Hh=172,px0=50,px1=408,py0=22,py1=132,ymax=Math.max(50,Math.ceil((ice33.s0||s0)*1000/50)*50);
+  const X=t=>px0+t/10000*(px1-px0),Y=m=>py1-m/ymax*(py1-py0);
+  chart+='<line x1="'+px0+'" x2="'+px1+'" y1="'+py1+'" y2="'+py1+'" style="stroke:var(--ink)"/><line x1="'+px0+'" x2="'+px0+'" y1="'+py0+'" y2="'+py1+'" style="stroke:var(--ink)"/>';
+  [0,5000,10000].forEach(t=>{chart+='<text x="'+X(t)+'" y="'+(py1+16)+'" text-anchor="'+(t===0?'start':t===10000?'end':'middle')+'" class="svgm" style="fill:var(--muted)">'+nf(t)+'</text>'});
+  [0,ymax/2,ymax].forEach(m=>{chart+='<text x="'+(px0-6)+'" y="'+(Y(m)+4)+'" text-anchor="end" class="svgm" style="fill:var(--muted)">'+nf(m)+'</text><line x1="'+px0+'" x2="'+px1+'" y1="'+Y(m)+'" y2="'+Y(m)+'" style="stroke:var(--line)"/>'});
+  if(ice33.trace.length>1)chart+='<polyline fill="none" style="stroke:var(--accent)" stroke-width="2.5" points="'+ice33.trace.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')+'"/>';
+  chart+='<text x="'+px1+'" y="'+(py1+36)+'" text-anchor="end" class="svgs" style="fill:var(--muted)">녹은 뒤 지난 시간(년)</text><text x="'+px0+'" y="13" class="svgs" style="fill:var(--muted)">융기량(m)</text>';
+  $('#r33').innerHTML='<h3>계산</h3><div class="calc">'+
+    row('최대 침강','빙하 두께 × 0.9 ÷ 3.3 = '+nf(ice33.I,1)+' × 0.9 ÷ 3.3 = <b>'+nf(s0*1000,0)+' m</b>')+
+    row('융기량','<b class="big">'+nf(Math.max(0,up),0)+' m</b>')+
+    row('현재 속도','<b>'+(rate>0?rate.toFixed(1):'0.0')+' cm/년</b>')+'</div>'+
+    '<svg viewBox="0 0 '+W+' '+Hh+'" style="width:100%;height:auto;display:block;margin-top:8px" role="img" aria-label="시간에 따른 융기량">'+chart+'</svg>'}
+function stopIce(){if(ice33.raf)cancelAnimationFrame(ice33.raf);ice33.raf=0}
+function ctlIce(){
+  $('#ctl33').innerHTML='<h3>빙하</h3><div class="field"><label for="c33I">빙하 두께</label><input type="range" id="c33I" min="0.5" max="3" step="0.1" value="'+ice33.I+'"><span class="val" id="v33I"></span></div>'+
+    '<div class="actions" style="margin-top:6px"><button class="btn" type="button" id="b33a">빙하 덮기</button><button class="btn" type="button" id="b33b">빙하 녹이기 → 1만 년 지켜보기</button><button class="btn ghost" type="button" id="b33c">처음으로</button></div>'+
+    '<p class="note" style="margin-top:8px">1.3 km는 교과서 수치(1만 년 동안 약 300 m, 지금 연 1 cm)에 맞춘 모형 값이에요.</p>';
+  $('#c33I').oninput=e=>{if(ice33.phase!=='idle')return void(e.target.value=String(ice33.I));ice33.I=+e.target.value;sideIce()};
+  $('#b33a').onclick=()=>{if(ice33.busy)return;stopIce();ice33.busy=true;ice33.phase='covered';ice33.t=0;ice33.trace=[];const I=ice33.I,s0=I*RICE/RM;ice33.s0=s0;
+    const a=ice33.shown,b0=ice33.disp;tween(1500,e=>{ice33.shown=a+(I-a)*e;ice33.disp=b0+(s0-b0)*e;drawIce();sideIce()},()=>{ice33.busy=false;drawIce();sideIce()})};
+  $('#b33b').onclick=()=>{if(ice33.busy)return;if(ice33.phase!=='covered'){$('#b33a').click();return}ice33.busy=true;ice33.phase='melting';const a=ice33.shown;
+    tween(1200,e=>{ice33.shown=a*(1-e);drawIce()},()=>{ice33.shown=0;ice33.phase='rebound';ice33.trace=[[0,0]];const t0=performance.now(),dur=reduceMotion?0:6000;
+      (function f(now){const k=dur?Math.min(1,(now-t0)/dur):1;ice33.t=k*10000;ice33.disp=ice33.s0*Math.exp(-ice33.t/TAU);ice33.trace.push([ice33.t,(ice33.s0-ice33.disp)*1000]);drawIce();sideIce();
+        if(k<1)ice33.raf=requestAnimationFrame(f);else{ice33.phase='done';ice33.busy=false;ice33.raf=0;drawIce();sideIce()}})(t0)})};
+  $('#b33c').onclick=()=>{stopIce();Object.assign(ice33,{shown:0,disp:0,s0:0,t:0,trace:[],phase:'idle',busy:false});drawIce();sideIce()};
+  $('#cap33').textContent='빙하 아래 지각의 움직임은 잘 보이도록 크게 과장해서 그렸어요. 맨틀이 아주 천천히 흘러서 지각은 수천 년에 걸쳐 떠올라요.';
+  $('#k33').innerHTML='<b>빙하가 녹으면 융기</b> 빙하의 무게가 사라지면 지각이 떠올라요. 스칸디나비아반도는 지난 1만 년 동안 최대 약 300 m 융기했고, 지금도 해마다 약 1 cm씩 솟아오르고 있어요.'}
+const RICE=0.9;
+/* 침식 */
+function drawEro(){
+  const svg=$('#svg33');svg.replaceChildren();
+  const xL=30,xR=610,c0=220,c1=420,yS=y33(0);
+  S('rect',{x:xL,y:yS,width:xR-xL,height:540-yS,fill:MAT.mantle.fill},svg);
+  S('rect',{x:xL,y:yS,width:c0-xL,height:T0*K33,fill:MAT.granite.fill},svg);
+  S('rect',{x:c1,y:yS,width:xR-c1,height:T0*K33,fill:MAT.granite.fill},svg);
+  const top=y33(-ero33.h),bot=y33(ero33.Th-ero33.h);
+  S('rect',{x:c0,y:top,width:c1-c0,height:bot-top,fill:MAT.granite.fill},svg);
+  if(ero33.slabA>0.01)S('rect',{x:c0,y:y33(-ero33.h-ero33.slab),width:c1-c0,height:ero33.slab*K33,fill:'var(--warn)',opacity:ero33.slabA},svg);
+  S('path',{d:'M'+xL+','+yS+' L'+c0+','+yS+' L'+c0+','+top+' L'+c1+','+top+' L'+c1+','+yS+' L'+xR+','+yS,fill:'none',stroke:'var(--edge)','stroke-width':1.5},svg);
+  S('path',{d:'M'+xL+','+y33(T0)+' L'+c0+','+y33(T0)+' L'+c0+','+bot+' L'+c1+','+bot+' L'+c1+','+y33(T0)+' L'+xR+','+y33(T0),fill:'none',stroke:'var(--ink)','stroke-width':2.5},svg);
+  const h0=ero33.h0,Th0=5.5*h0+T0;
+  if(ero33.E>0){S('rect',{x:c0,y:y33(-h0),width:c1-c0,height:(Th0)*K33,fill:'none',stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'6 4',opacity:.75},svg);
+    S('text',{x:c1+8,y:y33(-h0)+4,class:'svgs',fill:'var(--muted)',text:'처음 높이'},svg);S('text',{x:c1+8,y:y33(Th0-h0)+4,class:'svgs',fill:'var(--muted)',text:'처음 모호면'},svg)}
+  S('text',{x:(c0+c1)/2,y:top-10,'text-anchor':'middle',class:'svgl',fill:'var(--ink)',text:'산맥 '+nf(ero33.h,2)+' km'},svg);
+  S('text',{x:(c0+c1)/2,y:(top+bot)/2,'text-anchor':'middle',class:'svgl',fill:MAT.granite.ink,text:'지각 (ρ 2.7)'},svg);
+  S('text',{x:(c0+c1)/2,y:bot-10,'text-anchor':'middle',class:'svgm',fill:MAT.granite.ink,text:'모호면 '+nf(ero33.Th-ero33.h,1)+' km'},svg);
+  S('text',{x:xL+10,y:yS-8,class:'svgs',fill:'var(--muted)',text:'평야 (해발 0 m)'},svg);
+  S('text',{x:xL+10,y:500,class:'svgl',fill:MAT.mantle.ink,text:'맨틀 (ρ 3.3)'},svg);
+  S('text',{x:xL,y:24,class:'svgt',fill:'var(--ink)',text:ero33.E>0?'지금까지 '+nf(ero33.E,0)+' km 깎이고 '+nf(ero33.E*RC/RM,2)+' km 솟았어요':'산맥 꼭대기를 깎아 보세요'},svg)}
+function sideEro(){const dh=ero33.h0-ero33.h;
+  $('#r33').innerHTML='<h3>계산</h3><div class="calc">'+
+    row('깎인 양','<b>'+nf(ero33.E,0)+' km</b>')+row('다시 솟은 양','깎인 양 × 2.7 ÷ 3.3 = <b>'+nf(ero33.E*RC/RM,2)+' km</b>')+
+    row('산 높이','4.50 → <b class="big">'+nf(ero33.h,2)+' km</b>')+row('낮아진 높이','<b>'+nf(dh,2)+' km</b> (깎인 양의 '+(ero33.E?nf(dh/ero33.E*100,0):'0')+'%)')+
+    row('모호면 깊이','<b>'+nf(ero33.Th-ero33.h,1)+' km</b>')+'</div>';
+  const b=$('#b33cut');if(b)b.disabled=ero33.busy||ero33.h<2.2}
+function ctlEro(){
+  $('#ctl33').innerHTML='<h3>침식</h3><div class="actions"><button class="btn" type="button" id="b33cut">꼭대기 2 km 깎기</button><button class="btn ghost" type="button" id="b33r">처음으로</button></div><p class="note" style="margin-top:8px">해발 4.5 km 산맥(뿌리 20.3 km)에서 시작해요.</p>';
+  $('#b33cut').onclick=()=>{if(ero33.busy||ero33.h<2.2)return;ero33.busy=true;sideEro();
+    ero33.Th-=2;ero33.h-=2;ero33.slab=2;ero33.E+=2;const hs=ero33.h,he=(ero33.Th-T0)/5.5;
+    tween(700,e=>{ero33.slabA=1-e;drawEro()},()=>{ero33.slabA=0;tween(1100,e=>{ero33.h=hs+(he-hs)*e;drawEro()},()=>{ero33.h=he;ero33.busy=false;drawEro();sideEro()})})};
+  $('#b33r').onclick=()=>{if(ero33.busy)return;Object.assign(ero33,{h:ero33.h0,Th:5.5*ero33.h0+T0,E:0,slab:0,slabA:0});drawEro();sideEro()};
+  $('#cap33').textContent='지각 2.7, 맨틀 3.3 g/cm³인 에어리 모형이고 실제 비율대로 그렸어요. 점선은 처음 모습이에요.';
+  $('#k33').innerHTML='<b>침식되면 융기</b> 깎인 만큼 다 솟지는 않아요. 2 km가 깎이면 약 1.64 km(2 × 2.7 ÷ 3.3) 솟아서, 산은 약 0.36 km만 낮아져요. 그래서 산맥은 아주 오랫동안 남아 있어요.'}
+/* 퇴적 */
+function drawSed(){
+  const svg=$('#svg33');svg.replaceChildren();
+  const xL=30,xR=610,c0=220,c1=420,yS=y33(0);
+  S('rect',{x:xL,y:yS,width:xR-xL,height:540-yS,fill:MAT.mantle.fill},svg);
+  S('rect',{x:xL,y:yS,width:c0-xL,height:T0*K33,fill:MAT.granite.fill},svg);
+  S('rect',{x:c1,y:yS,width:xR-c1,height:T0*K33,fill:MAT.granite.fill},svg);
+  const b=sed33.b,Sv=sed33.S;
+  S('rect',{x:c0,y:y33(b),width:c1-c0,height:T0*K33,fill:MAT.granite.fill},svg);
+  if(Sv>0.001)S('rect',{x:c0,y:y33(b-Sv),width:c1-c0,height:Sv*K33,fill:MAT.sed.fill},svg);
+  if(Sv>0.3)S('text',{x:(c0+c1)/2,y:y33(b-Sv/2)+5,'text-anchor':'middle',class:'svgl',fill:MAT.sed.ink,text:'퇴적물 '+nf(Sv,0)+' km (ρ 2.4)'},svg);
+  S('line',{x1:xL,x2:xR,y1:yS,y2:yS,stroke:'var(--m-water)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('text',{x:xR,y:yS-8,'text-anchor':'end',class:'svgs',fill:'var(--muted)',text:'해수면'},svg);
+  S('path',{d:'M'+xL+','+y33(T0)+' L'+c0+','+y33(T0)+' L'+c0+','+y33(b+T0)+' L'+c1+','+y33(b+T0)+' L'+c1+','+y33(T0)+' L'+xR+','+y33(T0),fill:'none',stroke:'var(--ink)','stroke-width':2.5},svg);
+  if(b>0.05){[0,T0].forEach(z=>S('line',{x1:c0,x2:c1,y1:y33(z),y2:y33(z),stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'6 4',opacity:.8},svg));
+    arrow(svg,c1-20,y33(T0),c1-20,y33(T0+b),'var(--warn)',2.5);
+    S('text',{x:c1+8,y:y33(b)+5,class:'svgl',fill:'var(--warn)',text:'기반암 '+nf(b,2)+' km 침강'},svg);
+    S('text',{x:c1+8,y:y33(0)-6,class:'svgs',fill:'var(--muted)',text:'처음 땅 높이'},svg)}
+  S('text',{x:(c0+c1)/2,y:y33(b+T0/2),'text-anchor':'middle',class:'svgl',fill:MAT.granite.ink,text:'지각 (ρ 2.7)'},svg);
+  S('text',{x:xL+10,y:500,class:'svgl',fill:MAT.mantle.ink,text:'맨틀 (ρ 3.3)'},svg);
+  S('text',{x:xL,y:24,class:'svgt',fill:'var(--ink)',text:Sv>0?'퇴적물 '+nf(Sv,0)+' km가 쌓여 지각이 '+nf(b,2)+' km 가라앉았어요':'바닷가 저지대에 퇴적물을 쌓아 보세요'},svg)}
+function sideSed(){const surf=sed33.S-sed33.b;
+  $('#r33').innerHTML='<h3>계산</h3><div class="calc">'+
+    row('쌓인 퇴적물','<b>'+nf(sed33.S,0)+' km</b>')+row('기반암 침강','퇴적물 × 2.4 ÷ 3.3 = <b class="big">'+nf(sed33.S*MAT.sed.rho/RM,2)+' km</b>')+
+    row('지표 높이','처음보다 <b>'+nf(surf,2)+' km</b> 높아짐')+row('모호면 깊이','<b>'+nf(T0+sed33.b,2)+' km</b>')+'</div>';
+  const bt=$('#b33add');if(bt)bt.disabled=sed33.busy||sed33.S>=6}
+function ctlSed(){
+  $('#ctl33').innerHTML='<h3>퇴적</h3><div class="actions"><button class="btn" type="button" id="b33add">퇴적물 2 km 쌓기</button><button class="btn ghost" type="button" id="b33r2">처음으로</button></div><p class="note" style="margin-top:8px">해발 0 m인 바닷가 저지대(지각 30 km)에서 시작해요.</p>';
+  $('#b33add').onclick=()=>{if(sed33.busy||sed33.S>=6)return;sed33.busy=true;sideSed();const s0=sed33.S,s1=s0+2,b0=sed33.b,b1=s1*MAT.sed.rho/RM;
+    tween(700,e=>{sed33.S=s0+2*e;drawSed()},()=>{sed33.S=s1;tween(1100,e=>{sed33.b=b0+(b1-b0)*e;drawSed()},()=>{sed33.b=b1;sed33.busy=false;drawSed();sideSed()})})};
+  $('#b33r2').onclick=()=>{if(sed33.busy)return;Object.assign(sed33,{S:0,b:0});drawSed();sideSed()};
+  $('#cap33').textContent='지각 2.7, 퇴적물 2.4, 맨틀 3.3 g/cm³ 모형이고 실제 비율대로 그렸어요. 점선은 처음 땅과 모호면 위치예요.';
+  $('#k33').innerHTML='<b>퇴적되면 침강</b> 퇴적물의 무게만큼 지각이 가라앉아요. 2 km가 쌓이면 원래 땅(기반암)은 약 1.45 km(2 × 2.4 ÷ 3.3) 내려가요.'}
+function show33(){stopIce();if(s33.sc==='ice'){if(ice33.busy){ice33.busy=false;if(ice33.phase==='rebound')ice33.phase='done'}ctlIce();drawIce();sideIce()}
+  else if(s33.sc==='ero'){ctlEro();drawEro();sideEro()}else{ctlSed();drawSed();sideSed()}}
+seg($('#c33s'),Object.keys(SC33).map(k=>({value:k,label:SC33[k].label})),()=>s33.sc,v=>{s33.sc=v;show33()});
+hooks['airy-3']=()=>{[...$('#c33s').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(Object.keys(SC33)[i]===s33.sc)));show33()};
+
+/* ======================================================
+   TAB 4-1 지각 평형의 원리
+   ====================================================== */
+const s41={st:1,rc:2.7,T:35,e:0,cur:50,playing:false,raf:0};
+const BOOK41={rc:2.7,T:35,e:0};
+function cols41(){return {c:[{mat:'granite',h:s41.T,rho:s41.rc},{mat:'mantle',h:50+s41.e-s41.T}],o:[{mat:'water',h:4},{mat:'sed',h:1},{mat:'basalt',h:5},{mat:'mantle',h:40}]}}
+const rhoOf=l=>l.rho!=null?l.rho:MAT[l.mat].rho;
+function pCol(L,dz){let p=0,z=0;for(const l of L){p+=rhoOf(l)*Math.min(l.h,Math.max(0,dz-z));z+=l.h}return p}
+const K41=7.3,TOP41=58;
+const y41=z=>TOP41+3*K41+z*K41;
+const fmtH=v=>nf(v,Math.abs(v-Math.round(v))<1e-9?0:1);
+const fmtR=r=>r.toFixed(Math.abs(r*10-Math.round(r*10))<1e-6?1:2);
+function draw41(){
+  const svg=$('#svg41');svg.replaceChildren();
+  const {c,o}=cols41(),yS=y41(0),y50=y41(50),st=s41.st;
+  const C={x:120,w:150},O={x:370,w:150};
+  S('rect',{x:60,y:y50,width:520,height:30,fill:MAT.mantle.fill,opacity:.55},svg);
+  function col(L,x,w,ztop,side){let z=ztop;L.forEach(l=>{const y0=y41(z),y1=y41(z+l.h),m=MAT[l.mat],hh=y1-y0,rho=rhoOf(l);
+      S('rect',{x,y:y0,width:w,height:hh,fill:m.fill},svg);
+      if(hh>=34){S('text',{x:x+w/2,y:(y0+y1)/2-3,'text-anchor':'middle',class:'svgl',fill:m.ink,text:l.mat==='granite'?'화강암':m.name},svg);
+        S('text',{x:x+w/2,y:(y0+y1)/2+14,'text-anchor':'middle',class:'svgm',fill:m.ink,text:'ρ = '+fmtR(rho)},svg)}
+      else if(hh>=12){S('text',{x:x+w/2,y:(y0+y1)/2+4.5,'text-anchor':'middle',class:'svgs',fill:m.ink,text:m.name+' ρ '+rho.toFixed(1)},svg)}
+      const tx=side==='left'?x-8:x+w+8;
+      S('text',{x:tx,y:(y0+y1)/2+4.5,'text-anchor':side==='left'?'end':'start',class:'svgm',fill:'var(--muted)',text:fmtH(l.h)+' km'+(hh<12?' '+m.name+' '+rho.toFixed(1):'')},svg);
+      z+=l.h});
+    S('rect',{x,y:y41(ztop),width:w,height:y41(z)-y41(ztop),fill:'none',stroke:'var(--edge)','stroke-width':1.2},svg)}
+  col(c,C.x,C.w,-s41.e,'left');col(o,O.x,O.w,0,'right');
+  S('text',{x:C.x+C.w/2,y:y41(-s41.e)-12,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:'대륙 지각'},svg);
+  S('text',{x:O.x+O.w/2,y:yS-12,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:'해양 지각'},svg);
+  S('line',{x1:60,x2:580,y1:yS,y2:yS,stroke:'var(--m-water)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('line',{x1:60,x2:580,y1:y50,y2:y50,stroke:'var(--ink)','stroke-width':2.5,'stroke-dasharray':'10 5'},svg);
+  S('text',{x:66,y:y50+20,class:'svgl',fill:'var(--ink)',text:'지각 평형 깊이 약 50 km'},svg);
+  if(st===1){S('rect',{x:C.x-3,y:y41(-s41.e)-3,width:C.w+6,height:s41.T*K41+6,fill:'none',stroke:'var(--accent)','stroke-width':3,'stroke-dasharray':'7 4',rx:4},svg);
+    S('rect',{x:O.x-3,y:y41(4)-3,width:O.w+6,height:6*K41+6,fill:'none',stroke:'var(--accent)','stroke-width':3,'stroke-dasharray':'7 4',rx:4},svg);
+    [C.x+40,C.x+C.w-40].forEach(ax=>arrow(svg,ax,y41(s41.T-s41.e)+46,ax,y41(s41.T-s41.e)+10,'var(--accent)',2.5));
+    [O.x+40,O.x+O.w-40].forEach(ax=>arrow(svg,ax,y41(10)+46,ax,y41(10)+10,'var(--accent)',2.5));
+    S('text',{x:320,y:y41(25),'text-anchor':'middle',class:'svgl',fill:'var(--accent)',text:'지각은 밀도가 작아서'},svg);
+    S('text',{x:320,y:y41(25)+18,'text-anchor':'middle',class:'svgl',fill:'var(--accent)',text:'맨틀 위에 떠 있어요'},svg)}
+  if(st===2){const bx=C.x+C.w+14,ya=y41(-s41.e),yb=y41(s41.T-s41.e);
+    S('path',{d:'M'+bx+','+ya+' l6,0 l0,'+(yb-ya)+' l-6,0',fill:'none',stroke:'var(--accent)','stroke-width':2.5},svg);
+    S('text',{x:bx+12,y:(ya+yb)/2-10,class:'svgl',fill:'var(--accent)',text:'두껍다'},svg);
+    S('text',{x:bx+12,y:(ya+yb)/2+8,class:'svgm',fill:'var(--accent)',text:fmtH(s41.T)+' km'},svg);
+    S('text',{x:bx+12,y:(ya+yb)/2+26,class:'svgm',fill:'var(--accent)',text:'ρ '+s41.rc.toFixed(2)},svg);
+    const ox=O.x-14,oa=y41(4),ob=y41(10);
+    S('path',{d:'M'+ox+','+oa+' l-6,0 l0,'+(ob-oa)+' l6,0',fill:'none',stroke:'var(--warn)','stroke-width':2.5},svg);
+    S('text',{x:ox-12,y:(oa+ob)/2-10,'text-anchor':'end',class:'svgl',fill:'var(--warn)',text:'얇다'},svg);
+    S('text',{x:ox-12,y:(oa+ob)/2+8,'text-anchor':'end',class:'svgm',fill:'var(--warn)',text:'6 km'},svg);
+    S('text',{x:ox-12,y:(oa+ob)/2+26,'text-anchor':'end',class:'svgm',fill:'var(--warn)',text:'ρ 2.4~3.0'},svg)}
+  if(st===3){const z=s41.cur,yc=y41(z),pc=pCol(c,z+s41.e),po=pCol(o,z);
+    S('rect',{x:C.x,y:y41(-s41.e),width:C.w,height:yc-y41(-s41.e),fill:'var(--ink)',opacity:.16},svg);
+    S('rect',{x:O.x,y:yS,width:O.w,height:yc-yS,fill:'var(--ink)',opacity:.16},svg);
+    S('line',{x1:60,x2:580,y1:yc,y2:yc,stroke:'var(--accent)','stroke-width':2.5},svg);
+    [[C,pc],[O,po]].forEach(([K,p])=>{const lab=nf(p*G,0)+' MPa',lw=lab.length*7.9+16;let ly=yc-28;if(ly<TOP41)ly=yc+6;
+      S('rect',{x:K.x+K.w/2-lw/2,y:ly,width:lw,height:22,rx:6,fill:'var(--accent)'},svg);
+      S('text',{x:K.x+K.w/2,y:ly+15.5,'text-anchor':'middle',class:'svgm',fill:'var(--accent-ink)',text:lab},svg)});
+    S('text',{x:580,y:yc-8,'text-anchor':'end',class:'svgm',fill:'var(--accent)',text:nf(z,1)+' km'},svg)}
+}
+const STEP41=[
+  {t:'❶ 밀도가 작은 지각이 밀도가 큰 맨틀 위에 떠 있어요.',d:'지각을 이루는 화강암(2.7)과 현무암(3.0)은 맨틀(3.3)보다 밀도가 작아요. 물 위의 나무 도막처럼 맨틀 위에 떠 있어요.'},
+  {t:'❷ 대륙 지각은 해양 지각보다 두껍고, 밀도는 작아요.',d:'대륙 지각은 약 35 km, 해양 지각(퇴적물 + 현무암)은 약 6 km예요. 밀도는 대륙(2.7)이 해양(2.4~3.0)보다 작아요.'},
+  {t:'❸ 약 50 km 깊이에서는 윗부분 암석이 누르는 압력이 같아져요.',d:'대륙 쪽은 가벼운 암석이 두껍게, 해양 쪽은 물과 무거운 암석, 맨틀이 쌓여 있어요. ‘압력 쌓아 보기’로 위에서부터 압력이 쌓이는 모습을 보세요.'}];
+function side41(){const st=s41.st;
+  [...$('#c41s').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i+1===st)));
+  $('#t41').innerHTML='<p><b>'+STEP41[st-1].t+'</b></p><p class="note">'+STEP41[st-1].d+'</p>';
+  $('#b41prev').disabled=st===1;$('#b41next').disabled=st===3;
+  const {c,o}=cols41(),Pc=pCol(c,50+s41.e),Po=pCol(o,50),diff=Math.abs(Pc-Po),eq=diff<0.05;
+  const z=s41.cur,pc=pCol(c,z+s41.e),po=pCol(o,z);
+  $('#v41z').textContent=nf(z,1)+' km';$('#c41z').value=String(z);
+  $('#r41').innerHTML='<h3>50 km 깊이에서 누르는 압력 (ρh 합)</h3><div class="calc">'+
+    row('대륙',c.map(l=>fmtR(rhoOf(l))+'×'+fmtH(l.h)).join(' + ')+' = <b>'+nf(Pc,1)+'</b>')+
+    row('해양',o.map(l=>rhoOf(l).toFixed(1)+'×'+fmtH(l.h)).join(' + ')+' = <b>'+nf(Po,1)+'</b>')+
+    row('지금 깊이','<span>'+nf(z,1)+' km → 대륙 '+nf(pc*G,0)+' MPa · 해양 '+nf(po*G,0)+' MPa</span>')+'</div>'+
+    '<p style="margin:8px 0 0">'+(eq?'<span class="badge ok">50 km에서 압력이 같아요 → 평형</span>':'<span class="badge '+(diff/Math.max(Pc,Po)<0.08?'ok':'no')+'">거의 같아요 · 차이 약 '+nf(diff/Math.max(Pc,Po)*100,1)+'%</span>')+'</p>';
+  $('#v41rc').textContent=s41.rc.toFixed(2);$('#c41rc').value=String(s41.rc);
+  $('#v41T').textContent=nf(s41.T,1)+' km';$('#c41T').value=String(s41.T);
+  $('#v41e').textContent=nf(s41.e,1)+' km';$('#c41e').value=String(s41.e)}
+function upd41(){draw41();side41()}
+function stop41(){if(s41.raf)cancelAnimationFrame(s41.raf);s41.raf=0;s41.playing=false;$('#b41play').textContent='압력 쌓아 보기'}
+seg($('#c41s'),[1,2,3].map(v=>({value:v,label:['❶','❷','❸'][v-1]+' 단계'})),()=>s41.st,v=>{stop41();s41.st=v;upd41()});
+$('#b41prev').onclick=()=>{stop41();s41.st=Math.max(1,s41.st-1);upd41()};
+$('#b41next').onclick=()=>{stop41();s41.st=Math.min(3,s41.st+1);upd41()};
+$('#b41play').onclick=()=>{if(s41.playing){stop41();return}s41.st=3;s41.playing=true;$('#b41play').textContent='멈추기';const t0=performance.now(),dur=reduceMotion?0:5000;
+  (function f(now){const k=dur?Math.min(1,(now-t0)/dur):1;s41.cur=Math.round(k*50*2)/2;upd41();if(k<1&&s41.playing)s41.raf=requestAnimationFrame(f);else stop41()})(t0)};
+$('#c41z').oninput=e=>{stop41();s41.cur=+e.target.value;s41.st=3;upd41()};
+$('#c41rc').oninput=e=>{s41.rc=+e.target.value;upd41()};
+$('#c41T').oninput=e=>{s41.T=+e.target.value;upd41()};
+$('#c41e').oninput=e=>{s41.e=+e.target.value;upd41()};
+$('#b41fit').onclick=()=>{const Po=pCol(cols41().o,50);const T=(RM*(50+s41.e)-Po)/(RM-s41.rc);s41.T=Math.max(15,Math.min(45,Math.round(T*10)/10));if(s41.st===1)s41.st=2;upd41()};
+$('#b41book').onclick=()=>{Object.assign(s41,BOOK41);upd41()};
+hooks['principle-1']=upd41;
+
+/* ======================================================
+   TAB 4-2 문제 풀기: 침식과 모호면 상승
+   ====================================================== */
+const E4BASE={h:5,Tc:35,Tm:15,rc:2.7,rm:3.3};
+const s4e=Object.assign({x:0,sub:1,practice:false,solved:0,inp:{},fb:{}},E4BASE);
+const f1=v=>nf(v,Math.abs(v*10-Math.round(v*10))<1e-6?1:2);
+function e4(){const {h,Tc,Tm,rc,rm,x}=s4e;const P0=rc*(h+Tc)+rm*Tm,P1=rc*Tc+rm*Tm;return {P0,P1,X:rc*h/rm,Px:P1+rm*x,def:rc*h}}
+const r_=v=>v.toFixed(1);
+function probText(){const {h,Tc,Tm,rc,rm}=s4e;return s4e.practice?
+  '침식 전 산맥의 높이가 '+fmtH(h)+' km이고, 그 아래로 대륙 지각 '+fmtH(Tc)+' km와 맨틀 '+fmtH(Tm)+' km가 기준 깊이까지 있어요. 대륙 지각 ρ = '+r_(rc)+', 맨틀 ρ = '+r_(rm)+' g/cm³일 때, 지각 평형을 유지하기 위한 모호면의 상승 높이 x를 구하시오.':
+  '침식 전 산맥의 높이가 5 km일 때, 지각 평형을 유지하기 위한 모호면의 상승 높이 x를 구하시오. (산맥 아래 대륙 지각 35 km, 맨틀 15 km · 대륙 지각 ρ = 2.7, 맨틀 ρ = 3.3 g/cm³)'}
+function draw4e(){
+  const svg=$('#svg4e');svg.replaceChildren();
+  const {h,Tc,Tm,rc,rm,x,sub}=s4e,{P0,Px,X}=e4();
+  const base=452,tot=h+Tc+Tm,k=350/tot,yz=d=>base-d*k;
+  const B={x:120,w:140},A={x:392,w:140};
+  const defs=S('defs',{},svg);const pat=S('pattern',{id:'hatch4e',width:8,height:8,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);
+  S('line',{x1:0,y1:0,x2:0,y2:8,stroke:'var(--warn)','stroke-width':3,opacity:.55},pat);
+  S('text',{x:B.x+B.w/2,y:yz(tot)-16,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:'침식 전 기둥'},svg);
+  S('text',{x:A.x+A.w/2,y:yz(tot)-16,'text-anchor':'middle',class:'svgt',fill:'var(--ink)',text:'침식 후 기둥'},svg);
+  function lay(X0,W,d0,d1,m,label,sub2){const y0=yz(d1),y1=yz(d0),hh=y1-y0;S('rect',{x:X0,y:y0,width:W,height:hh,fill:m.fill},svg);
+    if(hh>=34){S('text',{x:X0+W/2,y:(y0+y1)/2-3,'text-anchor':'middle',class:'svgl',fill:m.ink,text:label},svg);S('text',{x:X0+W/2,y:(y0+y1)/2+14,'text-anchor':'middle',class:'svgm',fill:m.ink,text:sub2},svg)}
+    else if(hh>=15)S('text',{x:X0+W/2,y:(y0+y1)/2+4.5,'text-anchor':'middle',class:'svgs',fill:m.ink,text:label+' '+sub2},svg)}
+  /* 침식 전 */
+  lay(B.x,B.w,0,Tm,MAT.mantle,'맨틀','ρ '+r_(rm));
+  lay(B.x,B.w,Tm,Tm+Tc,MAT.granite,'대륙 지각','ρ '+r_(rc));
+  lay(B.x,B.w,Tm+Tc,tot,MAT.granite,'산맥','ρ '+r_(rc));
+  S('rect',{x:B.x,y:yz(tot),width:B.w,height:h*k,fill:'url(#hatch4e)'},svg);
+  S('rect',{x:B.x,y:yz(tot),width:B.w,height:tot*k,fill:'none',stroke:sub===2?'var(--accent)':'var(--edge)','stroke-width':sub===2?3:1.2},svg);
+  [[Tm+Tc,tot,'h = '+fmtH(h)+' km'],[Tm,Tm+Tc,fmtH(Tc)+' km'],[0,Tm,fmtH(Tm)+' km']].forEach(([a,b,t])=>{const xx=B.x-12;
+    S('path',{d:'M'+(xx+5)+','+(yz(b)+1)+' l-5,0 l0,'+((b-a)*k-2).toFixed(1)+' l5,0',fill:'none',stroke:'var(--muted)','stroke-width':1.2},svg);
+    S('text',{x:xx-6,y:(yz(a)+yz(b))/2+4.5,'text-anchor':'end',class:'svgm',fill:'var(--muted)',text:t},svg)});
+  /* 침식 후 */
+  lay(A.x,A.w,0,Tm+x,MAT.mantle,'맨틀','ρ '+r_(rm));
+  lay(A.x,A.w,Tm+x,Tm+x+Tc,MAT.granite,'대륙 지각','ρ '+r_(rc));
+  if(sub>=3){S('rect',{x:A.x,y:yz(tot),width:A.w,height:h*k,fill:'none',stroke:'var(--warn)','stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
+    S('text',{x:A.x+A.w+8,y:yz(tot)+14,class:'svgs',fill:'var(--warn)',text:'깎인 '+fmtH(h)+' km'},svg)}
+  S('rect',{x:A.x,y:yz(Tm+x+Tc),width:A.w,height:(Tm+x+Tc)*k,fill:'none',stroke:sub===4?'var(--accent)':'var(--edge)','stroke-width':sub===4?3:1.2},svg);
+  S('line',{x1:B.x+B.w,x2:A.x+A.w+10,y1:yz(Tm),y2:yz(Tm),stroke:'var(--ink)','stroke-width':1.8,'stroke-dasharray':'2 4'},svg);
+  S('text',{x:A.x-8,y:yz(Tm)-7,'text-anchor':'end',class:'svgs',fill:'var(--ink)',text:'상승 전 모호면'},svg);
+  if(x>0.05){const ax=A.x+A.w+18,col=sub===5?'var(--accent)':'var(--ink)';arrow(svg,ax,yz(Tm),ax,yz(Tm+x),col,2.5);
+    S('text',{x:ax+8,y:(yz(Tm)+yz(Tm+x))/2+5,class:'svgl',fill:col,text:'x'},svg);
+    S('text',{x:ax-8,y:yz(Tm)+18,class:'svgm',fill:col,text:'x = '+nf(x,2)},svg)}
+  S('line',{x1:60,x2:600,y1:base,y2:base,stroke:sub===1?'var(--accent)':'var(--ink)','stroke-width':sub===1?3.5:2,'stroke-dasharray':'10 5'},svg);
+  S('text',{x:60,y:base+18,class:'svgl',fill:sub===1?'var(--accent)':'var(--ink)',text:'기준 깊이'},svg);
+  const pm=Math.max(P0,Px),eq=Math.abs(P0-Px)<0.035;
+  [[B,P0],[A,Px]].forEach(([C,p],i)=>{S('rect',{x:C.x,y:base+28,width:p/pm*C.w,height:12,rx:3,fill:eq?'var(--good)':(i===0?'var(--accent)':'var(--warn)')},svg);
+    S('text',{x:C.x+C.w/2,y:base+60,'text-anchor':'middle',class:'svgm',fill:'var(--ink)',text:'ρh 합 '+nf(p,2)},svg)})}
+function live4e(){const {rc,rm,h,Tc,Tm,x}=s4e,{P0,Px,X}=e4(),eq=Math.abs(P0-Px)<0.035;
+  const sl=$('#c4ex');sl.max=String(Math.ceil(h)+2);sl.value=String(x);$('#v4ex').textContent=nf(x,2)+' km';
+  $('#r4e').innerHTML='<h3>기준 깊이에서의 ρh 합</h3><div class="calc">'+
+    row('침식 전',r_(rc)+'×'+fmtH(h)+' + '+r_(rc)+'×'+fmtH(Tc)+' + '+r_(rm)+'×'+fmtH(Tm)+' = <b>'+f1(P0)+'</b>')+
+    row('침식 후',r_(rc)+'×'+fmtH(Tc)+' + '+r_(rm)+'×('+fmtH(Tm)+' + '+nf(x,2)+') = <b>'+nf(Px,2)+'</b>')+'</div>'+
+    '<p style="margin:8px 0 0">'+(eq?'<span class="badge ok">평형! x ≈ '+nf(X,2)+' km</span>':'<span class="badge no">'+(Px<P0?'아직 가벼워요 → 더 떠올라야 해요':'너무 무거워요 → 조금 내려가야 해요')+' (차이 '+nf(Math.abs(P0-Px),2)+')</span>')+'</p>'}
+const SUB4E=['① 기준 깊이','② 침식 전','③ 침식 직후','④ 식 세우기','⑤ 정리'];
+function ans4e(key,label,unit){return '<div class="ansrow"><label for="c4e'+key+'">'+label+'</label><input type="number" inputmode="decimal" step="any" id="c4e'+key+'" value="'+(s4e.inp[key]||'')+'"><span class="unit">'+(unit||'')+'</span><button class="btn" type="button" data-k="'+key+'">확인</button></div><p class="fbk '+(s4e.fb[key]?s4e.fb[key].c:'')+'" id="f4e'+key+'">'+(s4e.fb[key]?s4e.fb[key].t:'')+'</p>'}
+function chk4e(key){const {h,Tc,Tm,rc,rm}=s4e,{P0,P1,X,def}=e4();
+  const C={a:{v:P0,tol:.051,ok:r_(rc)+'×'+fmtH(h)+' + '+r_(rc)+'×'+fmtH(Tc)+' + '+r_(rm)+'×'+fmtH(Tm)+' = '+f1(P0),no:'산맥도 대륙 지각과 같은 암석(ρ '+r_(rc)+')이에요. 세 층의 밀도 × 두께를 모두 더해 보세요.'},
+    b:{v:P1,tol:.051,ok:r_(rc)+'×'+fmtH(Tc)+' + '+r_(rm)+'×'+fmtH(Tm)+' = '+f1(P1),no:'산맥 '+fmtH(h)+' km가 사라졌어요. 남은 대륙 지각과 맨틀만 더해요.'},
+    c:{v:def,tol:.051,ok:f1(P0)+' − '+f1(P1)+' = '+f1(def)+'. 깎여 나간 산맥의 몫(ρ지각 × h)이에요.',no:'② 값에서 ③의 첫 번째 값을 빼 보세요.'},
+    d:{v:X,tol:.051,ok:r_(rm)+' × x = '+f1(def)+' → x = '+f1(def)+' ÷ '+r_(rm)+' ≈ '+nf(X,2)+' km',no:'양변에 똑같이 있는 '+r_(rc)+'×'+fmtH(Tc)+'와 '+r_(rm)+'×'+fmtH(Tm)+'을 지우면 '+r_(rm)+' × x = '+f1(def)+'만 남아요.'}}[key];
+  const raw=($('#c4e'+key).value||'').trim();s4e.inp[key]=raw;const v=parseFloat(raw.replace(',','.'));
+  if(!raw||isNaN(v)){s4e.fb[key]={c:'no',t:'숫자를 입력해 주세요.'}}
+  else if(Math.abs(v-C.v)<=C.tol){s4e.fb[key]={c:'ok',t:'맞아요. '+C.ok};if(key==='d'){s4e.x=Math.round(X*100)/100;if(s4e.practice&&!s4e.counted){s4e.solved++;s4e.counted=true;prob4e()}draw4e();live4e()}}
+  else s4e.fb[key]={c:'no',t:'다시 볼까요? '+C.no};
+  const f=$('#f4e'+key);f.className='fbk '+s4e.fb[key].c;f.textContent=s4e.fb[key].t}
+function text4e(){const {h,Tc,Tm,rc,rm}=s4e,{P0,X,def}=e4(),sub=s4e.sub;let html='';
+  if(sub===1)html='<p><b>① 비교할 깊이를 정해요.</b></p><p class="note">침식 전 기둥의 맨 아래를 기준 깊이로 잡아요. 침식 전에는 평형 상태였으니, 이 깊이에서 위의 암석이 누르는 압력(ρh 합)이 ‘평형 압력’이에요. 침식 후에도 같은 깊이에서 이 값과 같아야 평형이에요.</p><p class="note">g는 양쪽에 똑같이 곱해지니 생략하고 ρh 합만 비교해요. (탭 1-5)</p>';
+  if(sub===2)html='<p><b>② 침식 전 기둥의 ρh 합을 구해요.</b></p><p class="note">산맥, 대륙 지각, 맨틀 세 층의 밀도 × 두께를 모두 더해요.</p>'+ans4e('a','침식 전 ρh 합 =');
+  if(sub===3)html='<p><b>③ 산맥이 깎여 나간 직후 (아직 떠오르기 전, x = 0)</b></p><p class="note">같은 깊이의 ρh 합과, 침식 전보다 부족해진 양을 구해요.</p>'+ans4e('b','침식 직후 ρh 합 =')+ans4e('c','부족한 양 =');
+  if(sub===4)html='<p><b>④ 지각이 x만큼 떠오르면?</b></p><p class="note">지각이 떠오른 만큼 그 아래를 맨틀이 채워서, 맨틀 두께가 '+fmtH(Tm)+' km에서 ('+fmtH(Tm)+' + x) km가 돼요. 슬라이더로 평형을 찾아보고, 식을 풀어 x를 구해요.</p><p class="eqline">'+r_(rc)+' × '+fmtH(Tc)+' + '+r_(rm)+' × ('+fmtH(Tm)+' + <i class="v">x</i>) = '+f1(P0)+'</p>'+ans4e('d','x =','km');
+  if(sub===5)html='<p><b>⑤ 정리</b></p><p class="eqline">'+r_(rm)+' × <i class="v">x</i> = '+r_(rc)+' × '+fmtH(h)+' &nbsp;→&nbsp; <i class="v">x</i> = '+f1(def)+' ÷ '+r_(rm)+' ≈ <b>'+nf(X,2)+' km</b></p>'+
+    '<p class="note">대륙 지각 '+fmtH(Tc)+' km와 맨틀 '+fmtH(Tm)+' km는 식의 양쪽에 똑같이 들어 있어서 지워져요. 결국 깎여 나간 무게(ρ지각 × h)를 맨틀(ρ맨틀)이 채운다고 생각하면 돼요.</p>'+
+    '<div class="callout"><b>한 줄 공식</b> &nbsp;<span class="eqi">x = h × ρ지각 ÷ ρ맨틀</span></div>'+
+    '<p class="note">지표는 '+fmtH(h)+' km 깎였지만 '+nf(X,2)+' km 다시 솟아서, 처음 산꼭대기보다 약 '+nf(h-X,2)+' km만 낮아졌어요.</p>';
+  $('#t4e').innerHTML=html;
+  $$('#t4e .ansrow button').forEach(b=>b.onclick=()=>chk4e(b.dataset.k));
+  $$('#t4e .ansrow input').forEach(inp=>{inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();chk4e(inp.id.slice(3))}};inp.oninput=()=>{s4e.inp[inp.id.slice(3)]=inp.value}});
+  [...$('#c4es').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i+1===sub)));
+  $('#b4eprev').disabled=sub===1;$('#b4enext').disabled=sub===5}
+function prob4e(){$('#q4e').textContent=probText();$('#n4e').textContent=s4e.practice?'· 변형':'';
+  $('#s4ecount').textContent=s4e.solved?'변형 문제 '+s4e.solved+'개 풀었어요':''}
+function goSub4e(n){s4e.sub=n;if(n===3)s4e.x=0;if(n===5)s4e.x=Math.round(e4().X*100)/100;text4e();draw4e();live4e()}
+function upd4e(){prob4e();text4e();draw4e();live4e()}
+seg($('#c4es'),SUB4E.map((t,i)=>({value:i+1,label:t})),()=>s4e.sub,v=>goSub4e(v));
+$('#b4eprev').onclick=()=>goSub4e(Math.max(1,s4e.sub-1));
+$('#b4enext').onclick=()=>goSub4e(Math.min(5,s4e.sub+1));
+$('#c4ex').oninput=e=>{s4e.x=+e.target.value;if(s4e.sub<4){s4e.sub=4;text4e()}draw4e();live4e()};
+$('#b4eorig').onclick=()=>{Object.assign(s4e,E4BASE,{x:0,sub:1,practice:false,inp:{},fb:{},counted:false});upd4e()};
+$('#b4enew').onclick=()=>{const pick=a=>a[Math.floor(Math.random()*a.length)];let p;
+  do{p={h:pick([2,3,4,5,6]),Tc:pick([30,35,40]),Tm:pick([10,15,20]),rc:pick([2.7,2.8]),rm:pick([3.3,3.4])}}while(p.h===s4e.h&&p.Tc===s4e.Tc&&p.Tm===s4e.Tm&&p.rc===s4e.rc&&p.rm===s4e.rm);
+  Object.assign(s4e,p,{x:0,sub:1,practice:true,inp:{},fb:{},counted:false});upd4e()};
+$('#b4elink').onclick=()=>{s33.sc='ero';location.hash='airy-3'};
+hooks['principle-2']=upd4e;
+
+/* ======================================================
+   TAB 4-3 정리 퀴즈
+   ====================================================== */
+const CMP42=[
+  {name:'지각의 밀도',opts:['다르다','일정하다'],ans:['다르다','일정하다']},
+  {name:'모호면 깊이',opts:['일정하다','다르다'],ans:['일정하다','다르다']},
+  {name:'지각 평형 설명',opts:['지각의 밀도 차이로','모호면의 깊이 차이로'],ans:['지각의 밀도 차이로','모호면의 깊이 차이로']}];
+const QUIZ42=[
+  {q:'높게 솟은 지형일수록 지각의 아랫부분이 깊다고 설명하는 학설은?',o:['프래트설','에어리설'],a:1,x:'에어리설은 밀도가 같은 지각이 떠 있어서, 높이 솟은 곳일수록 뿌리가 깊다고 설명해요.'},
+  {q:'에어리설에서 해발 고도가 높을수록 지각의 두께와 모호면의 깊이는?',o:['얇고, 얕다','두껍고, 깊다','두껍고, 얕다'],a:1,x:'높이 솟은 만큼 아래로도 깊이 잠기니 지각이 두껍고 모호면이 깊어요.'},
+  {q:'대륙 지각과 해양 지각의 밀도가 다르다는 점에서 더 타당한 학설은?',o:['프래트설','에어리설'],a:0,x:'프래트설은 지역마다 지각의 밀도가 다르다고 보았어요. 실제로 대륙(약 2.7)과 해양(약 3.0) 지각의 밀도가 달라요.'},
+  {q:'해발 고도가 높은 지역이 풍화·침식 작용을 받으면 지각은 평형을 유지하기 위해?',o:['융기한다','침강한다'],a:0,x:'위에서 무게가 줄어드니 지각이 떠올라요(융기).'},
+  {q:'지표면에 퇴적물이 쌓여 지각의 무게가 늘어나는 지역에서 일어나는 현상은?',o:['융기','침강'],a:1,x:'무게가 늘어나 지각이 가라앉아요(침강). 우리나라 서해안 다도해가 교과서 예시예요.'},
+  {q:'나무 도막 실험에서 ‘얼음이 녹을 때’에 해당하는 실제 지구의 현상은?',o:['침강','융기'],a:1,x:'얼음이 녹으면 도막이 떠오르듯, 빙하가 녹은 스칸디나비아반도는 융기하고 있어요.'},
+  {q:'현무암(3.0) 6 km와 같은 깊이에서 압력 평형을 이루려면 화강암(2.7)은 약 몇 km 쌓여야 할까?',o:['5.4 km','6.0 km','6.7 km','7.5 km'],a:2,x:'3.0 × 6 = 18 이므로 2.7 × h = 18 → h ≈ 6.7 km. 밀도가 작은 물질은 더 두껍게 쌓여야 해요.'},
+  {q:'에어리 모형(지각 2.7, 맨틀 3.3)에서 해발 2 km인 산의 뿌리는 약 몇 km 내려갈까?',o:['2 km','4.5 km','9 km','13.5 km'],a:2,x:'뿌리 = 높이 × 2.7 ÷ 0.6 = 2 × 4.5 = 9 km.'},
+  {q:'에어리 모형(지각 2.7, 맨틀 3.3)에서 해발 3 km인 산맥이 한꺼번에 깎여 나가면, 평형을 되찾기 위해 모호면은 약 몇 km 올라갈까?',o:['약 0.5 km','약 2.5 km','3 km','약 13.5 km'],a:1,x:'x = 3 × 2.7 ÷ 3.3 ≈ 2.45 km. 깎여 나간 무게(2.7 × 3)만큼을 맨틀(3.3)이 채워요.'},
+  {q:'약 50 km 깊이에서 대륙 쪽과 해양 쪽의 압력이 같아지는 까닭으로 알맞은 것은?',o:['대륙 지각이 두껍지만 밀도가 작기 때문','대륙 지각이 얇고 밀도가 크기 때문','맨틀의 밀도가 지역마다 다르기 때문'],a:0,x:'밀도가 작은 대륙 지각이 두껍게 쌓여서, 얇고 무거운 해양 쪽 기둥과 같은 압력을 만들어요.'}];
+const ans42={};
+function score42(){const n=QUIZ42.length,ok=Object.keys(ans42).filter(k=>ans42[k]===QUIZ42[k].a).length,done=Object.keys(ans42).length;
+  $('#q42score').textContent='퀴즈 '+ok+' / '+n+' 맞음'+(done<n?' · '+(n-done)+'문제 남음':'')}
+function render42(){
+  const tb=$('#cmp42 tbody');tb.replaceChildren();
+  CMP42.forEach((r,i)=>{const tr=H('tr',{},H('td',{},r.name));[0,1].forEach(j=>{const sel=H('select',{id:'cmp42-'+i+'-'+j,'aria-label':r.name+' '+(j?'에어리설':'프래트설')},H('option',{value:''},'고르세요'));
+      r.opts.forEach(o=>sel.append(H('option',{value:o},o)));sel.onchange=()=>{sel.parentNode.classList.remove('ok','bad');$('#n42cmp').textContent=''};tr.append(H('td',{},sel))});tb.append(tr)});
+  const box=$('#quiz42');box.replaceChildren();
+  QUIZ42.forEach((q,i)=>{const card=H('div',{class:'card q'});card.append(H('h3',{},'문제 '+(i+1)),H('p',{class:'qq'},q.q));
+    const opts=H('div',{class:'opts',role:'radiogroup','aria-label':'문제 '+(i+1)});const fb=H('p',{class:'fb'});
+    q.o.forEach((o,j)=>{const id='q42-'+i+'-'+j;const inp=H('input',{type:'radio',name:'q42-'+i,id,value:String(j)});const lab=H('label',{for:id},inp,H('span',{},o));
+      inp.onchange=()=>{ans42[i]=j;[...opts.querySelectorAll('label')].forEach((L,k)=>{L.classList.toggle('right',k===q.a);L.classList.toggle('wrong',k===j&&j!==q.a);L.querySelector('input').disabled=true});
+        fb.innerHTML=(j===q.a?'<b style="color:var(--good)">맞아요.</b> ':'<b style="color:var(--warn)">다시 볼까요?</b> ')+q.x;score42()};
+      opts.append(lab)});
+    card.append(opts,fb);box.append(card)});
+  score42()}
+$('#b42cmp').onclick=()=>{let ok=0,all=0;CMP42.forEach((r,i)=>[0,1].forEach(j=>{const sel=$('#cmp42-'+i+'-'+j);all++;const good=sel.value===r.ans[j];if(good)ok++;sel.parentNode.classList.toggle('ok',good);sel.parentNode.classList.toggle('bad',!good)}));
+  $('#n42cmp').textContent=ok+' / '+all+' 맞음'+(ok===all?' · 완벽해요!':' · 빨간 칸을 다시 골라 보세요.')};
+$('#b42reset').onclick=()=>{Object.keys(ans42).forEach(k=>delete ans42[k]);$('#n42cmp').textContent='';render42()};
+render42();
+
+/* ---------- 시작 ---------- */
+table11();
+route();
+})();
+</script>
+
+</body>
+</html>
